@@ -1,0 +1,6 @@
+/windows/source/__recovery
+/windows/source/__history
+/installer/output
+/windows/bin
+/windows/dcu
+/windows/source/*.~dsk
