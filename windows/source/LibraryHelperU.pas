@@ -13,7 +13,7 @@
 
   ----------------------------------------------------------------------------
 
-  History: 
+  History:
 
   ----------------------------------------------------------------------------- }
 unit LibraryHelperU;
@@ -494,6 +494,8 @@ begin
       ), FSystemEnvironmentVariables.Variable[LVariableIdx].Value,
       [rfReplaceAll, rfIgnoreCase]));
   end;
+  Result := ExcludeTrailingPathDelimiter(StringReplace(Result, '$(BDS)',
+    GetRootPath, [rfReplaceAll, rfIgnoreCase]));
 end;
 
 procedure TDelphiInstallation.Load;
@@ -879,7 +881,7 @@ begin
       try
         LPath := ALibrary[LLibraryIdx];
         LPath := ExpandLibraryPath(LPath);
-        LValid := (Trim(LPath) <> '') and (DirectoryExists(LPath));
+        LValid := (Trim(LPath) <> ''); // and (DirectoryExists(LPath));
       finally
         if LValid then
         begin

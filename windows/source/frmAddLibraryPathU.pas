@@ -179,6 +179,7 @@ var
 begin
   editPath.Items.BeginUpdate;
   try
+    editPath.Items.Add('$(BDS)');
     for LIdx := 0 to Pred(FDelphiInstallation.EnvironmentVariables.Count) do
     begin
       LPath := FDelphiInstallation.EnvironmentVariables.Variable[LIdx].Value;

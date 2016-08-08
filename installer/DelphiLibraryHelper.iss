@@ -64,11 +64,11 @@ Name: program; Description: Program Files; Types: typical custom
 
 [Files]
 Source: "..\windows\bin\win32\release\{#ConstAppExeName}"; DestDir: "{app}"; Flags: promptifolder replacesameversion; Components: program
-Source: "..\docs\*.*"; DestDir: "{app}"; Flags: recursesubdirs; Components: program
+Source: "..\docs\templates\*.dlht"; DestDir: "{app}\templates";  Components: program
 Source: "..\images\DelphiLibraryHelper.ico"; DestDir: "{app}"; DestName: "DelphiLibraryHelper.ico"
 ; Source Code Components
 Source: "..\docs\*.*"; DestDir: "{app}\source\docs\"; Flags: recursesubdirs; Components: code
-Source: "..\installer\*.*"; DestDir: "{app}\source\installer\"; Flags: recursesubdirs; Components: code
+Source: "..\installer\*.*"; DestDir: "{app}\source\installer\"; Components: code
 Source: "..\images\*.*"; DestDir: "{app}\source\images\"; Flags: recursesubdirs; Components: code
 Source: "..\windows\*.pas"; DestDir: "{app}\source\windows\"; Flags: recursesubdirs; Components: code
 Source: "..\windows\*.dfm"; DestDir: "{app}\source\windows\"; Flags: recursesubdirs; Components: code

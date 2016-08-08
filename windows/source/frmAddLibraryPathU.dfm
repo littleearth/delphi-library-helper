@@ -44,8 +44,6 @@ object frmAddLibraryPath: TfrmAddLibraryPath
       Align = alClient
       Caption = 'Destination'
       TabOrder = 1
-      ExplicitTop = 46
-      ExplicitHeight = 133
       object GridPanel1: TGridPanel
         AlignWithMargins = True
         Left = 5
@@ -117,7 +115,6 @@ object frmAddLibraryPath: TfrmAddLibraryPath
             Value = 25.000000000000000000
           end>
         TabOrder = 0
-        ExplicitHeight = 110
         object cbAndroid32: TCheckBox
           AlignWithMargins = True
           Left = 3
@@ -212,6 +209,7 @@ object frmAddLibraryPath: TfrmAddLibraryPath
         Width = 552
         Height = 21
         Align = alClient
+        Sorted = True
         TabOrder = 0
         OnDropDown = editPathDropDown
       end
@@ -224,8 +222,6 @@ object frmAddLibraryPath: TfrmAddLibraryPath
         Action = ActionSelectFolder
         Align = alRight
         TabOrder = 1
-        ExplicitTop = 5
-        ExplicitHeight = 33
       end
     end
   end
