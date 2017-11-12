@@ -360,6 +360,11 @@ begin
   ApplyTemplatePaths(ALibraryPathTemplate.CommonVCL, FLibraryWin64);
   ApplyTemplatePaths(ALibraryPathTemplate.Win64, FLibraryWin64);
 
+  ApplyTemplatePaths(ALibraryPathTemplate.Common, FLibraryLinux64);
+  ApplyTemplatePaths(ALibraryPathTemplate.CommonFMX, FLibraryLinux64);
+  ApplyTemplatePaths(ALibraryPathTemplate.CommonVCL, FLibraryWin64);
+  ApplyTemplatePaths(ALibraryPathTemplate.Linux64, FLibraryLinux64);
+
 end;
 
 function TDelphiInstallation.AddPath(APath: string;

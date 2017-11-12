@@ -71,6 +71,7 @@ type
     FIOS64: TLibraryPaths;
     FAndroid32: TLibraryPaths;
     FIOSSimulator: TLibraryPaths;
+    FLinux64: TLibraryPaths;
   protected
     procedure LoadSection(AFileName: TFileName; ASectionName: string;
       ALibraryPathList: TLibraryPaths);
@@ -88,6 +89,7 @@ type
     property IOS64: TLibraryPaths read FIOS64;
     property IOSSimulator: TLibraryPaths read FIOSSimulator;
     property Android32: TLibraryPaths read FAndroid32;
+    property Linux64: TLibraryPaths read FLinux64;
   end;
 
 implementation
@@ -110,6 +112,7 @@ begin
   FIOS64 := TLibraryPaths.Create;
   FAndroid32 := TLibraryPaths.Create;
   FIOSSimulator := TLibraryPaths.Create;
+  FLinux64 := TLibraryPaths.Create;
 end;
 
 destructor TLibraryPathTemplate.Destroy;
@@ -125,6 +128,7 @@ begin
     FreeAndNil(FIOS64);
     FreeAndNil(FAndroid32);
     FreeAndNil(FIOSSimulator);
+    FreeAndNil(FLinux64);
   finally
     inherited;
   end;
@@ -143,6 +147,7 @@ begin
   LoadSection(AFileName, 'ios64', FIOS64);
   LoadSection(AFileName, 'iossimulator', FIOSSimulator);
   LoadSection(AFileName, 'android32', FAndroid32);
+  LoadSection(AFileName, 'linux64', FLinux64);
 end;
 
 procedure TLibraryPathTemplate.LoadSection(AFileName: TFileName;
