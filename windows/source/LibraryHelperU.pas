@@ -18,6 +18,8 @@
   ----------------------------------------------------------------------------- }
 unit LibraryHelperU;
 
+{$WARN SYMBOL_PLATFORM OFF}
+
 interface
 
 uses
@@ -26,7 +28,7 @@ uses
 
 type
   TDelphiLibrary = (dlAndroid32, dlIOS32, dlIOS64, dlIOSimulator, dlOSX32,
-    dlWin32, dlWin64);
+    dlWin32, dlWin64, dlLinux64);
 
 type
   TEnviromentVariable = class
@@ -54,7 +56,7 @@ type
   public
     function FindVariable(AName: string): TEnviromentVariable;
     constructor Create;
-    destructor Destroy;
+    destructor Destroy; override;
     function Count: integer;
     function Add(AName: string; AValue: string): integer;
     procedure Clear;
@@ -66,7 +68,6 @@ type
   TDelphiInstallation = class
   private
     FRegistryKey: string;
-    FRootPath: string;
     FEnvironmentVariables: TEnvironmentVariables;
     FSystemEnvironmentVariables: TEnvironmentVariables;
     FLibraryAndroid32: TStringList;
@@ -76,6 +77,7 @@ type
     FLibraryOSX32: TStringList;
     FLibraryWin32: TStringList;
     FLibraryWin64: TStringList;
+    FLibraryLinux64: TStringList;
     function GetInstalled: boolean;
     function GetProductName: string;
     procedure SaveEnvironmentVariables;
@@ -99,6 +101,8 @@ type
     function GetLibraryOSX32: string;
     function GetLibraryWin32: string;
     function GetLibraryWin64: string;
+    function GetLibraryLinux64: string;
+    procedure SetLibraryLinux64(const Value: string);
     function GetRootPath: string;
     function GetLibraryPathAsString(AStrings: TStrings): string;
     procedure SetLibraryPathFromString(AString: string; AStrings: TStrings);
@@ -142,6 +146,8 @@ type
     property LibraryIOS64: string read GetLibraryIOS64 write SetLibraryIOS64;
     property LibraryIOSSimulator: string read GetLibraryIOSSimulator
       write SetLibraryIOSSimulator;
+    property LibraryLinux64: string read GetLibraryLinux64
+      write SetLibraryLinux64;
   end;
 
 type
@@ -162,6 +168,8 @@ type
     procedure Load;
     function InstallationCount: integer;
     function IsDelphiRunning: boolean;
+    function GetLibraryName(ADelphiLibrary: TDelphiLibrary): string;
+    procedure GetLbraryNames(AStrings: TStrings);
     property Installations[AIndex: integer]: TDelphiInstallation
       read GetInstallation;
     property Installation[AProductName: string]: TDelphiInstallation
@@ -243,6 +251,41 @@ end;
 function TLibraryHelper.GetInstallation(AIndex: integer): TDelphiInstallation;
 begin
   Result := FDelphiInstallationList.Items[AIndex];
+end;
+
+procedure TLibraryHelper.GetLbraryNames(AStrings: TStrings);
+var
+  LDelphiLibrary: TDelphiLibrary;
+begin
+  AStrings.Clear;
+  for LDelphiLibrary := Low(TDelphiLibrary) to High(TDelphiLibrary) do
+  begin
+    AStrings.Add(GetLibraryName(LDelphiLibrary));
+  end;
+
+end;
+
+function TLibraryHelper.GetLibraryName(ADelphiLibrary: TDelphiLibrary): string;
+begin
+  Result := 'Unknown Library (' + IntToStr(integer(ADelphiLibrary)) + ')';
+  case ADelphiLibrary of
+    dlAndroid32:
+      Result := 'Android32';
+    dlIOS32:
+      Result := 'iOS32';
+    dlIOS64:
+      Result := 'iOS64';
+    dlIOSimulator:
+      Result := 'iOSSimulator';
+    dlOSX32:
+      Result := 'macOS32';
+    dlWin32:
+      Result := 'Win32';
+    dlWin64:
+      Result := 'Win64';
+    dlLinux64:
+      Result := 'Linux64';
+  end;
 end;
 
 function TLibraryHelper.InstallationCount: integer;
@@ -392,6 +435,7 @@ begin
   FLibraryOSX32 := CreateLibraryStringList;
   FLibraryWin32 := CreateLibraryStringList;
   FLibraryWin64 := CreateLibraryStringList;
+  FLibraryLinux64 := CreateLibraryStringList;
 end;
 
 function TDelphiInstallation.CreateLibraryStringList: TStringList;
@@ -440,6 +484,7 @@ begin
       try
         LPath := ALibrary[LLibraryIdx];
         LPath := ExpandLibraryPath(LPath);
+
         if (LLibrary.Find(LPath, LFindIdx)) or
           (LLibrary.Find(IncludeTrailingPathDelimiter(LPath), LFindIdx)) then
         begin
@@ -477,6 +522,7 @@ begin
     FreeAndNil(FLibraryOSX32);
     FreeAndNil(FLibraryWin32);
     FreeAndNil(FLibraryWin64);
+    FreeAndNil(FLibraryLinux64);
   finally
     inherited;
   end;
@@ -546,6 +592,7 @@ begin
   SetLibraryPathFromDelimited(LoadLibrary('OSX32'), FLibraryOSX32);
   SetLibraryPathFromDelimited(LoadLibrary('Win32'), FLibraryWin32);
   SetLibraryPathFromDelimited(LoadLibrary('Win64'), FLibraryWin64);
+  SetLibraryPathFromDelimited(LoadLibrary('Linux64'), FLibraryLinux64);
 end;
 
 function TDelphiInstallation.GetInstalled: boolean;
@@ -685,6 +732,11 @@ begin
   Result := GetLibraryPathAsString(FLibraryIOSSimulator);
 end;
 
+function TDelphiInstallation.GetLibraryLinux64: string;
+begin
+  Result := GetLibraryPathAsString(FLibraryLinux64);
+end;
+
 function TDelphiInstallation.GetLibraryOSX32: string;
 begin
   Result := GetLibraryPathAsString(FLibraryOSX32);
@@ -711,8 +763,55 @@ var
 begin
   LProductVersion := GetProductVersion;
   case LProductVersion of
+    25:
+      Result := 'Delphi Tokyo';
     24:
-      Result := 'Delphi 10.1 Berlin';
+      Result := 'Delphi Berlin';
+    23:
+      Result := 'Delphi Seattle';
+    22:
+      Result := 'Delphi XE8';
+    21:
+      Result := 'Delphi XE7';
+    20:
+      Result := 'Delphi XE6';
+    19:
+      Result := 'Delphi XE5';
+    18:
+      Result := 'Delphi XE4';
+    17:
+      Result := 'Delphi XE3';
+    16:
+      Result := 'Delphi XE2';
+    15:
+      Result := 'Delphi XE';
+    14:
+      Result := 'Delphi 2010';
+    12:
+      Result := 'Delphi 2009';
+    11:
+      Result := 'Delphi 2007';
+    10:
+      Result := 'Delphi 2006';
+    9:
+      Result := 'Delphi 2005';
+    8:
+      Result := 'Delphi 8';
+    7:
+      Result := 'Delphi 7';
+    6:
+      Result := 'Delphi 6';
+    5:
+      Result := 'Delphi 5';
+    4:
+      Result := 'Delphi 4';
+    3:
+      Result := 'Delphi 3';
+    2:
+      Result := 'Delphi 2';
+    1:
+      Result := 'Delphi 1';
+
   else
     Result := Format('Unknown Version %d', [LProductVersion]);
   end;
@@ -842,6 +941,11 @@ begin
   SetLibraryPathFromString(Value, FLibraryIOSSimulator);
 end;
 
+procedure TDelphiInstallation.SetLibraryLinux64(const Value: string);
+begin
+  SetLibraryPathFromString(Value, FLibraryLinux64);
+end;
+
 procedure TDelphiInstallation.SetLibraryOSX32(const Value: string);
 begin
   SetLibraryPathFromString(Value, FLibraryOSX32);
@@ -961,7 +1065,6 @@ function TEnvironmentVariables.Add(AName: string; AValue: string): integer;
 var
   LEnviromentVariable: TEnviromentVariable;
 begin
-  Result := -1;
   LEnviromentVariable := FindVariable(AName);
   if Assigned(LEnviromentVariable) then
   begin

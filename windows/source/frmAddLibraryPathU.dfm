@@ -7,11 +7,7 @@ object frmAddLibraryPath: TfrmAddLibraryPath
   ClientHeight = 235
   ClientWidth = 645
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'Tahoma'
-  Font.Style = []
+  ParentFont = True
   OldCreateOrder = False
   Position = poOwnerFormCenter
   PixelsPerInch = 96
@@ -93,6 +89,11 @@ object frmAddLibraryPath: TfrmAddLibraryPath
           item
             Column = 0
             Control = cbWin64
+            Row = 3
+          end
+          item
+            Column = 1
+            Control = cbLinux64
             Row = 3
           end>
         ExpandStyle = emFixedSize
@@ -191,6 +192,21 @@ object frmAddLibraryPath: TfrmAddLibraryPath
           Caption = 'Win64'
           PopupMenu = PopupMenuDestinations
           TabOrder = 6
+        end
+        object cbLinux64: TCheckBox
+          AlignWithMargins = True
+          Left = 314
+          Top = 78
+          Width = 306
+          Height = 19
+          Align = alClient
+          Caption = 'Linux64'
+          PopupMenu = PopupMenuDestinations
+          TabOrder = 7
+          ExplicitLeft = 418
+          ExplicitTop = 79
+          ExplicitWidth = 97
+          ExplicitHeight = 17
         end
       end
     end
@@ -294,7 +310,7 @@ object frmAddLibraryPath: TfrmAddLibraryPath
     Left = 48
     Top = 191
     Bitmap = {
-      494C010107000900040010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010107000900080010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

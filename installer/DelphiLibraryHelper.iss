@@ -21,7 +21,7 @@
 #define ConstAppMutex "Delphi Library Helper"
 #define ConstAppDescription "Delphi Library Helper"
 #define ConstAppPublisher "Little Earth Solutions"
-#define ConstAppCopyright "Copyright (C) 2016 Little Earth Solutions"
+#define ConstAppCopyright "Copyright (C) 2017 Little Earth Solutions"
 #define ConstAppURL "http://www.littleearthsolutions.net/"
 #define ConstAppExeName "DelphiLibraryHelper.exe"
 

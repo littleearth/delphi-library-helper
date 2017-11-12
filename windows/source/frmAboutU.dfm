@@ -6,11 +6,7 @@ object frmAbout: TfrmAbout
   ClientHeight = 272
   ClientWidth = 298
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'MS Sans Serif'
-  Font.Style = []
+  ParentFont = True
   OldCreateOrder = True
   Position = poScreenCenter
   OnCreate = FormCreate
@@ -32,13 +28,14 @@ object frmAbout: TfrmAbout
       Left = 5
       Top = 111
       Width = 282
-      Height = 36
+      Height = 13
       Align = alTop
       Alignment = taCenter
       Caption = 'Comments'
       Layout = tlCenter
       WordWrap = True
       IsControl = True
+      ExplicitWidth = 50
     end
     object Bevel1: TBevel
       AlignWithMargins = True
@@ -125,47 +122,43 @@ object frmAbout: TfrmAbout
         object ProductName: TLabel
           Left = 0
           Top = 0
-          Width = 186
-          Height = 56
+          Width = 67
+          Height = 13
           Align = alClient
           Alignment = taCenter
           Caption = 'Product Name'
           WordWrap = True
           IsControl = True
-          ExplicitWidth = 68
-          ExplicitHeight = 13
         end
         object CompanyName: TLabel
           AlignWithMargins = True
           Left = 3
           Top = 72
-          Width = 180
+          Width = 75
           Height = 13
           Align = alBottom
           Alignment = taCenter
           Caption = 'Company Name'
           IsControl = True
-          ExplicitWidth = 75
         end
         object Version: TLabel
           Left = 0
           Top = 56
-          Width = 186
+          Width = 36
           Height = 13
           Align = alBottom
           Alignment = taCenter
           Caption = '0.0.0.0'
           IsControl = True
-          ExplicitWidth = 33
         end
       end
     end
     object memoCredits: TMemo
       AlignWithMargins = True
       Left = 5
-      Top = 150
+      Top = 127
       Width = 282
-      Height = 64
+      Height = 87
       Align = alClient
       Alignment = taCenter
       Lines.Strings = (
@@ -175,6 +168,8 @@ object frmAbout: TfrmAbout
         'Icons from Icons8')
       ReadOnly = True
       TabOrder = 1
+      ExplicitTop = 150
+      ExplicitHeight = 64
     end
   end
   object Panel2: TPanel

@@ -5,11 +5,7 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
   ClientHeight = 626
   ClientWidth = 767
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'Tahoma'
-  Font.Style = []
+  ParentFont = True
   Menu = MainMenu
   OldCreateOrder = False
   Position = poScreenCenter
@@ -70,7 +66,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
       Align = alRight
       Caption = 'Save'
       TabOrder = 1
-      ExplicitLeft = 478
     end
     object BitBtn8: TBitBtn
       AlignWithMargins = True
@@ -82,7 +77,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
       Align = alRight
       Caption = 'Load'
       TabOrder = 2
-      ExplicitLeft = 559
     end
   end
   object GroupBox2: TGroupBox
@@ -134,7 +128,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
         RowSelect = True
         TabOrder = 1
         ViewStyle = vsReport
-        ExplicitWidth = 355
       end
       object Panel5: TPanel
         Left = 0
@@ -144,7 +137,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitWidth = 355
       end
     end
     object Panel2: TPanel
@@ -157,7 +149,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
       BevelOuter = bvNone
       Caption = 'Panel2'
       TabOrder = 0
-      ExplicitWidth = 390
       object Label1: TLabel
         AlignWithMargins = True
         Left = 3
@@ -189,7 +180,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
         RowSelect = True
         TabOrder = 1
         ViewStyle = vsReport
-        ExplicitWidth = 390
       end
       object Panel4: TPanel
         Left = 0
@@ -199,7 +189,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitWidth = 390
         object BitBtn5: TBitBtn
           AlignWithMargins = True
           Left = 84
@@ -283,18 +272,8 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
         Height = 21
         Align = alLeft
         Style = csDropDownList
-        ItemIndex = 0
         TabOrder = 0
-        Text = 'Android32'
         OnChange = comboLibrariesChange
-        Items.Strings = (
-          'Android32'
-          'IOS32'
-          'IOS64'
-          'IOSSimulator'
-          'OSX32'
-          'Win32'
-          'Win64')
       end
     end
     object StatusBar: TStatusBar
@@ -398,7 +377,7 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
     Left = 77
     Top = 397
     Bitmap = {
-      494C01010D001100040020002000FFFFFFFF2100FFFFFFFFFFFFFFFF424D3600
+      494C01010D001100080020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000008000000001002000000000000000
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2514,7 +2493,8 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
       E0000007E007FFFFFC00003FFE00007FF000000FF00FFFFFFC00003FFF8001FF
       F800001FFFFFFFFFFE00003FFFC003FFFFFFFFFFFFFFFFFFFF00003FFFF81FFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000
+      000000000000}
   end
   object MainMenu: TMainMenu
     Images = ImageList

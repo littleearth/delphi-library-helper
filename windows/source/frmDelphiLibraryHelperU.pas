@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, System.UITypes,
   Vcl.Buttons, Vcl.ExtCtrls, LibraryHelperU, Vcl.ComCtrls, System.Actions,
   Vcl.ActnList, System.ImageList, Vcl.ImgList, Vcl.Menus;
 
@@ -327,6 +327,8 @@ end;
 
 procedure TfrmDelphiLibraryHelper.FormCreate(Sender: TObject);
 begin
+  Self.Width := Screen.Width - (Screen.Width div 4);
+  Self.Height := Screen.Height - (Screen.Height div 4);
   FApplicationActive := False;
   FLibraryHelper := TLibraryHelper.Create;
   comboLibraries.ItemIndex := 0;
@@ -362,7 +364,12 @@ begin
           .ProductName);
       end;
     end;
+    FLibraryHelper.GetLbraryNames(comboLibraries.Items);
   finally
+    if comboLibraries.Items.Count > 0 then
+    begin
+      comboLibraries.ItemIndex := 0;
+    end;
     if comboDelphiInstallations.Items.Count > 0 then
     begin
       comboDelphiInstallations.ItemIndex := 0;
@@ -499,6 +506,8 @@ begin
           LLibrary.Text := FDelphiInstallation.LibraryWin32;
         dlWin64:
           LLibrary.Text := FDelphiInstallation.LibraryWin64;
+        dlLinux64:
+          LLibrary.Text := FDelphiInstallation.LibraryLinux64;
       end;
       for LIdx := 0 to Pred(LLibrary.Count) do
       begin

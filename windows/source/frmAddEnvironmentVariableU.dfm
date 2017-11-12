@@ -7,11 +7,7 @@ object frmAddEnvironmentVariable: TfrmAddEnvironmentVariable
   ClientHeight = 165
   ClientWidth = 389
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'Tahoma'
-  Font.Style = []
+  ParentFont = True
   OldCreateOrder = False
   Position = poOwnerFormCenter
   PixelsPerInch = 96
@@ -70,21 +66,19 @@ object frmAddEnvironmentVariable: TfrmAddEnvironmentVariable
       AlignWithMargins = True
       Left = 3
       Top = 3
-      Width = 377
+      Width = 27
       Height = 13
       Align = alTop
       Caption = 'Name'
-      ExplicitWidth = 27
     end
     object Label2: TLabel
       AlignWithMargins = True
       Left = 3
       Top = 46
-      Width = 377
+      Width = 26
       Height = 13
       Align = alTop
       Caption = 'Value'
-      ExplicitWidth = 26
     end
     object editName: TEdit
       AlignWithMargins = True
@@ -132,7 +126,7 @@ object frmAddEnvironmentVariable: TfrmAddEnvironmentVariable
     Left = 48
     Top = 121
     Bitmap = {
-      494C010106000900040010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010106000900080010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

@@ -12,12 +12,27 @@ File_9=TSourceModule,'C:\Development\ABit Consulting\PJMS\windows\client\source\
 File_10=TSourceModule,'C:\Development\ABit Consulting\PJMS\windows\client\source\base\accounts\purchase orders\frmPurchaseOrderReportsU.pas',0,1,225,3,196,0,0,,
 
 [Modules]
-Module0=C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmAboutU.pas
-Module1=C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\FileVersionInformationU.pas
-Module2=C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\LibraryPathsU.pas
-Module3=C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\LibraryHelperU.pas
-Count=4
+Module0=C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\LibraryHelperU.pas
+Module1=C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmAddLibraryPathU.pas
+Module2=C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmDelphiLibraryHelperU.pas
+Module3=c:\program files (x86)\embarcadero\studio\18.0\source\rtl\common\System.Classes.pas
+Module4=C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmAboutU.pas
+Module5=C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\FileVersionInformationU.pas
+Module6=C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\LibraryPathsU.pas
+Count=7
 EditWindowCount=1
+
+[C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\LibraryHelperU.pas]
+ModuleType=TSourceModule
+
+[C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmAddLibraryPathU.pas]
+ModuleType=TSourceModule
+
+[C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmDelphiLibraryHelperU.pas]
+ModuleType=TSourceModule
+
+[c:\program files (x86)\embarcadero\studio\18.0\source\rtl\common\System.Classes.pas]
+ModuleType=TSourceModule
 
 [C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmAboutU.pas]
 ModuleType=TSourceModule
@@ -28,16 +43,16 @@ ModuleType=TSourceModule
 [C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\LibraryPathsU.pas]
 ModuleType=TSourceModule
 
-[C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\LibraryHelperU.pas]
-ModuleType=TSourceModule
-
 [EditWindow0]
-ViewCount=4
-CurrentEditView=C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmAboutU.pas
+ViewCount=7
+CurrentEditView=C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\LibraryHelperU.pas
 View0=0
 View1=1
 View2=2
 View3=3
+View4=4
+View5=5
+View6=6
 PercentageSizes=1
 Create=1
 Visible=1
@@ -83,7 +98,7 @@ CustomEditViewType=TEditView
 Module=C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmAboutU.pas
 CursorX=35
 CursorY=37
-TopLine=29
+TopLine=32
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -92,15 +107,48 @@ EditViewName=C:\Development\Little Earth Solutions\delphi-library-helper\windows
 [View2]
 CustomEditViewType=TEditView
 Module=C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\LibraryHelperU.pas
-CursorX=1
-CursorY=1
-TopLine=1
+CursorX=45
+CursorY=497
+TopLine=476
 LeftCol=1
 Elisions=
 Bookmarks=
 EditViewName=C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\LibraryHelperU.pas
 
 [View3]
+CustomEditViewType=TEditView
+Module=C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmDelphiLibraryHelperU.pas
+CursorX=1
+CursorY=1
+TopLine=1
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=Borland.FormDesignerView
+
+[View4]
+CustomEditViewType=TEditView
+Module=C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmAddLibraryPathU.pas
+CursorX=50
+CursorY=178
+TopLine=170
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmAddLibraryPathU.pas
+
+[View5]
+CustomEditViewType=TEditView
+Module=c:\program files (x86)\embarcadero\studio\18.0\source\rtl\common\System.Classes.pas
+CursorX=1
+CursorY=603
+TopLine=584
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=c:\program files (x86)\embarcadero\studio\18.0\source\rtl\common\System.Classes.pas
+
+[View6]
 CustomEditViewType=TEditView
 Module=C:\Development\Little Earth Solutions\delphi-library-helper\windows\source\LibraryPathsU.pas
 CursorX=25
@@ -293,11 +341,6 @@ LRDockWidth=1896
 Dockable=1
 StayOnTop=0
 SplitPos=111
-
-[PropInspDesignerSelection]
-ArrangeBy=Name
-SelectedItem=Align,
-ExpandedItems=Anchors=0,Constraints=0,Font=0,LiveBindings=0,"LiveBindings Designer=0",Margins=0,BevelEdges=0,StyleElements=0,Touch=0
 
 [ClassBrowserTool]
 PercentageSizes=1

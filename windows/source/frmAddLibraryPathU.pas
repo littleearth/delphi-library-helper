@@ -1,10 +1,12 @@
 unit frmAddLibraryPathU;
 
+{$WARN SYMBOL_PLATFORM OFF}
+
 interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, Vcl.Graphics,
+  System.Classes, Vcl.Graphics, System.UITypes,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   Vcl.ExtCtrls, Vcl.Buttons, LibraryHelperU, Vcl.Menus,
   System.Actions, Vcl.ActnList, System.ImageList, Vcl.ImgList;
@@ -36,6 +38,7 @@ type
     editPath: TComboBox;
     BitBtn3: TBitBtn;
     ActionSelectFolder: TAction;
+    cbLinux64: TCheckBox;
     procedure CheckAll1Click(Sender: TObject);
     procedure UncheckAll1Click(Sender: TObject);
     procedure ActionCancelExecute(Sender: TObject);
