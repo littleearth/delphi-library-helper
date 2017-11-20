@@ -203,10 +203,6 @@ object frmAddLibraryPath: TfrmAddLibraryPath
           Caption = 'Linux64'
           PopupMenu = PopupMenuDestinations
           TabOrder = 7
-          ExplicitLeft = 418
-          ExplicitTop = 79
-          ExplicitWidth = 97
-          ExplicitHeight = 17
         end
       end
     end
@@ -310,7 +306,7 @@ object frmAddLibraryPath: TfrmAddLibraryPath
     Left = 48
     Top = 191
     Bitmap = {
-      494C010107000900080010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C0101070009000C0010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

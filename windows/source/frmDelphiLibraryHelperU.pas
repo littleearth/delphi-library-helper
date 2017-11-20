@@ -12,8 +12,6 @@ uses
 type
   TfrmDelphiLibraryHelper = class(TForm)
     GroupBox1: TGroupBox;
-    comboDelphiInstallations: TComboBox;
-    lblRootPath: TLabel;
     GroupBox2: TGroupBox;
     GroupBox3: TGroupBox;
     Panel1: TPanel;
@@ -58,6 +56,27 @@ type
     ActionAbout: TAction;
     Exit1: TMenuItem;
     About1: TMenuItem;
+    ActionFindReplace: TAction;
+    BitBtn9: TBitBtn;
+    PopupMenuLibrary: TPopupMenu;
+    Add1: TMenuItem;
+    Delete1: TMenuItem;
+    N2: TMenuItem;
+    DeleteAll1: TMenuItem;
+    N3: TMenuItem;
+    Replace1: TMenuItem;
+    N4: TMenuItem;
+    ActionCopyLibraryPath: TAction;
+    ActionOpenFolder: TAction;
+    Openfolder1: TMenuItem;
+    ActionCopyLibraryValue: TAction;
+    Copy1: TMenuItem;
+    Copypath1: TMenuItem;
+    Copyvalue1: TMenuItem;
+    Panel6: TPanel;
+    comboDelphiInstallations: TComboBox;
+    lblRootPath: TLabel;
+    Panel7: TPanel;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -79,6 +98,17 @@ type
     procedure ListViewLibraryDblClick(Sender: TObject);
     procedure ActionExitExecute(Sender: TObject);
     procedure ActionAboutExecute(Sender: TObject);
+    procedure ActionFindReplaceExecute(Sender: TObject);
+    procedure ListViewLibraryCustomDrawItem(Sender: TCustomListView;
+      Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
+    procedure ActionCopyLibraryPathUpdate(Sender: TObject);
+    procedure ActionOpenFolderExecute(Sender: TObject);
+    procedure ActionCopyLibraryPathExecute(Sender: TObject);
+    procedure ListViewEnvironmentVariablesCustomDrawItem
+      (Sender: TCustomListView; Item: TListItem; State: TCustomDrawState;
+      var DefaultDraw: Boolean);
+    procedure ActionCopyLibraryValueExecute(Sender: TObject);
+    procedure lblRootPathClick(Sender: TObject);
   private
     FApplicationActive: Boolean;
     FModified: Boolean;
@@ -91,6 +121,7 @@ type
     procedure LoadLibrary;
     procedure SaveLibrary;
     procedure LoadSystemEnvironmentVariables;
+    function ValidatePath(APath: string): Boolean;
   public
     { Public declarations }
   end;
@@ -103,7 +134,7 @@ implementation
 {$R *.dfm}
 
 uses
-  frmAddLibraryPathU, frmAddEnvironmentVariableU, frmAboutU;
+  frmAddLibraryPathU, frmAddEnvironmentVariableU, frmAboutU, frmFindReplaceU;
 
 procedure TfrmDelphiLibraryHelper.ActionAboutExecute(Sender: TObject);
 begin
@@ -177,6 +208,33 @@ begin
   ActionApplyTemplate.Enabled := Assigned(FDelphiInstallation);
 end;
 
+procedure TfrmDelphiLibraryHelper.ActionCopyLibraryPathExecute(Sender: TObject);
+begin
+  if (Assigned(FDelphiInstallation)) and (Assigned(ListViewLibrary.Selected))
+  then
+  begin
+    FDelphiInstallation.CopyToClipBoard(ListViewLibrary.Selected.Caption,
+      FActiveDelphiLibrary);
+  end;
+end;
+
+procedure TfrmDelphiLibraryHelper.ActionCopyLibraryPathUpdate(Sender: TObject);
+begin
+  ActionCopyLibraryPath.Enabled := Assigned(FDelphiInstallation) and
+    Assigned(ListViewLibrary.Selected);
+end;
+
+procedure TfrmDelphiLibraryHelper.ActionCopyLibraryValueExecute
+  (Sender: TObject);
+begin
+  if (Assigned(FDelphiInstallation)) and (Assigned(ListViewLibrary.Selected))
+  then
+  begin
+    FDelphiInstallation.CopyToClipBoard(ListViewLibrary.Selected.Caption,
+      FActiveDelphiLibrary, False);
+  end;
+end;
+
 procedure TfrmDelphiLibraryHelper.ActionDeleteAllLibraryPathsExecute
   (Sender: TObject);
 begin
@@ -213,6 +271,22 @@ end;
 procedure TfrmDelphiLibraryHelper.ActionExitExecute(Sender: TObject);
 begin
   Self.Close;
+end;
+
+procedure TfrmDelphiLibraryHelper.ActionFindReplaceExecute(Sender: TObject);
+var
+  LFindReplace: TfrmFindReplace;
+begin
+  LFindReplace := TfrmFindReplace.Create(Self);
+  try
+    if LFindReplace.Execute(FDelphiInstallation) then
+    begin
+      FModified := True;
+      LoadLibrary;
+    end;
+  finally
+    FreeAndNil(LFindReplace);
+  end;
 end;
 
 procedure TfrmDelphiLibraryHelper.ActionListUpdate(Action: TBasicAction;
@@ -254,6 +328,16 @@ end;
 procedure TfrmDelphiLibraryHelper.ActionLoadUpdate(Sender: TObject);
 begin
   ActionLoad.Enabled := comboDelphiInstallations.ItemIndex <> -1;
+end;
+
+procedure TfrmDelphiLibraryHelper.ActionOpenFolderExecute(Sender: TObject);
+begin
+  if (Assigned(FDelphiInstallation)) and (Assigned(ListViewLibrary.Selected))
+  then
+  begin
+    FDelphiInstallation.OpenFolder(ListViewLibrary.Selected.Caption,
+      FActiveDelphiLibrary);
+  end;
 end;
 
 procedure TfrmDelphiLibraryHelper.ActionSaveExecute(Sender: TObject);
@@ -332,6 +416,9 @@ begin
   FApplicationActive := False;
   FLibraryHelper := TLibraryHelper.Create;
   comboLibraries.ItemIndex := 0;
+  lblRootPath.Font.Style := [fsUnderline];
+  lblRootPath.Font.Size := Self.Font.Size - 1;
+  lblRootPath.Font.Color := clHighlight;
 end;
 
 procedure TfrmDelphiLibraryHelper.FormDestroy(Sender: TObject);
@@ -339,13 +426,51 @@ begin
   FreeAndNil(FLibraryHelper);
 end;
 
+procedure TfrmDelphiLibraryHelper.lblRootPathClick(Sender: TObject);
+begin
+  FDelphiInstallation.OpenFolder(lblRootPath.Caption, dlWin32);
+end;
+
+procedure TfrmDelphiLibraryHelper.ListViewEnvironmentVariablesCustomDrawItem
+  (Sender: TCustomListView; Item: TListItem; State: TCustomDrawState;
+  var DefaultDraw: Boolean);
+begin
+  if Odd(Item.Index) then
+  begin
+    Sender.Canvas.Font.Color := clBlack;
+    Sender.Canvas.Brush.Color := clSkyBlue;
+  end
+  else
+  begin
+    Sender.Canvas.Font.Color := clBlack;
+    Sender.Canvas.Brush.Color := clWhite;
+  end;
+end;
+
+procedure TfrmDelphiLibraryHelper.ListViewLibraryCustomDrawItem
+  (Sender: TCustomListView; Item: TListItem; State: TCustomDrawState;
+  var DefaultDraw: Boolean);
+begin
+  if Odd(Item.Index) then
+  begin
+    Sender.Canvas.Font.Color := clBlack;
+    Sender.Canvas.Brush.Color := clSkyBlue;
+  end
+  else
+  begin
+    Sender.Canvas.Font.Color := clBlack;
+    Sender.Canvas.Brush.Color := clWhite;
+  end;
+  if not ValidatePath(Item.Caption) then
+  begin
+    Sender.Canvas.Font.Color := clBlack;
+    Sender.Canvas.Brush.Color := clRed;
+  end;
+end;
+
 procedure TfrmDelphiLibraryHelper.ListViewLibraryDblClick(Sender: TObject);
 begin
-  if (Assigned(FDelphiInstallation)) and (Assigned(ListViewLibrary.Selected))
-  then
-  begin
-    FDelphiInstallation.OpenFolder(ListViewLibrary.Selected.Caption);
-  end;
+  ActionOpenFolder.Execute;
 end;
 
 procedure TfrmDelphiLibraryHelper.LoadDelphiInstallation;
@@ -520,6 +645,19 @@ begin
       FreeAndNil(LLibrary);
       ListViewLibrary.Items.EndUpdate;
     end;
+  end;
+end;
+
+function TfrmDelphiLibraryHelper.ValidatePath(APath: string): Boolean;
+var
+  LPath: string;
+begin
+  Result := False;
+  LPath := APath;
+  if Trim(LPath) <> '' then
+  begin
+    LPath := FDelphiInstallation.ExpandLibraryPath(LPath, FActiveDelphiLibrary);
+    Result := DirectoryExists(LPath);
   end;
 end;
 

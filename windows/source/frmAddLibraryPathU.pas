@@ -88,6 +88,8 @@ begin
       LSuccess := FDelphiInstallation.AddPath(editPath.Text, dlWin32);
     if cbWin64.Checked then
       LSuccess := FDelphiInstallation.AddPath(editPath.Text, dlWin64);
+    if cbLinux64.Checked then
+      LSuccess := FDelphiInstallation.AddPath(editPath.Text, dlLinux64);
   end;
   if LSuccess then
   begin
@@ -147,6 +149,7 @@ begin
   cbOSX.Checked := AValue;
   cbWin32.Checked := AValue;
   cbWin64.Checked := AValue;
+  cbLinux64.Checked := AValue;
 end;
 
 procedure TfrmAddLibraryPath.SetFormValues;
@@ -167,6 +170,8 @@ begin
       cbWin32.Checked := True;
     dlWin64:
       cbWin64.Checked := True;
+    dlLinux64:
+      cbLinux64.Checked := True;
   end;
 end;
 

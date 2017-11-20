@@ -16,7 +16,8 @@ uses
   frmAddEnvironmentVariableU
     in 'frmAddEnvironmentVariableU.pas' {frmAddEnvironmentVariable} ,
   frmAboutU in 'frmAboutU.pas' {frmAbout} ,
-  FileVersionInformationU in 'FileVersionInformationU.pas';
+  FileVersionInformationU in 'FileVersionInformationU.pas',
+  frmFindReplaceU in 'frmFindReplaceU.pas' {frmFindReplace};
 
 {$R *.res}
 

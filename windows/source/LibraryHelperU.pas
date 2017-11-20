@@ -104,18 +104,23 @@ type
     function GetLibraryLinux64: string;
     procedure SetLibraryLinux64(const Value: string);
     function GetRootPath: string;
+
     function GetLibraryPathAsString(AStrings: TStrings): string;
-    procedure SetLibraryPathFromString(AString: string; AStrings: TStrings);
+    procedure SetLibraryPathFromString(AString: string; AStrings: TStrings;
+      ALibrary: TDelphiLibrary);
     function GetLibraryPathDelimited(AStrings: TStrings): string;
-    procedure SetLibraryPathFromDelimited(AString: string; AStrings: TStrings);
+    procedure SetLibraryPathFromDelimited(AString: string; AStrings: TStrings;
+      ALibrary: TDelphiLibrary);
     function CreateLibraryStringList: TStringList;
     function GetProductVersion: integer;
     procedure ApplyTemplatePaths(ALibraryPaths: TLibraryPaths;
       ALibrary: TStrings);
     function GetAllEnvironemntVariables(const Vars: TStrings): integer;
 
-    procedure ValidateLibraryPaths(ALibrary: TStrings);
-    procedure DeduplicateLibraryPaths(ALibrary: TStrings);
+    procedure ValidateLibraryPaths(ALibrary: TStrings;
+      ADelphiLibrary: TDelphiLibrary);
+    procedure DeduplicateLibraryPaths(ALibrary: TStrings;
+      ADelphiLibrary: TDelphiLibrary);
     function ExecuteFile(const Operation, FileName, Params, DefaultDir: string;
       ShowCmd: word): integer;
   public
@@ -127,8 +132,12 @@ type
     procedure Apply(AFileName: TFileName); overload;
     function AddPath(APath: string; ALibrary: TDelphiLibrary): boolean;
     procedure DeduplicateLibrary(ALibrary: TDelphiLibrary);
-    function OpenFolder(AFolder: string): boolean;
-    function ExpandLibraryPath(APath: string): string;
+    function OpenFolder(AFolder: string; ALibrary: TDelphiLibrary): boolean;
+    function GetLibraryName(ALibrary: TDelphiLibrary): string;
+    function GetLibraryPlatformName(ALibrary: TDelphiLibrary): string;
+    procedure CopyToClipBoard(APath: string; ALibrary: TDelphiLibrary;
+      AExpand: boolean = true);
+    function ExpandLibraryPath(APath: string; ALibrary: TDelphiLibrary): string;
     property Installed: boolean read GetInstalled;
     property ProductVersion: integer read GetProductVersion;
     property ProductName: string read GetProductName;
@@ -137,6 +146,8 @@ type
       read FEnvironmentVariables;
     property SystemEnvironmentVariables: TEnvironmentVariables
       read FSystemEnvironmentVariables;
+    procedure LibraryAsStrings(AStrings: TStrings;
+      ADelphiLibrary: TDelphiLibrary);
     property LibraryWin32: string read GetLibraryWin32 write SetLibraryWin32;
     property LibraryWin64: string read GetLibraryWin64 write SetLibraryWin64;
     property LibraryOSX32: string read GetLibraryOSX32 write SetLibraryOSX32;
@@ -169,6 +180,7 @@ type
     function InstallationCount: integer;
     function IsDelphiRunning: boolean;
     function GetLibraryName(ADelphiLibrary: TDelphiLibrary): string;
+    function GetLibraryPlatformName(ADelphiLibrary: TDelphiLibrary): string;
     procedure GetLbraryNames(AStrings: TStrings);
     property Installations[AIndex: integer]: TDelphiInstallation
       read GetInstallation;
@@ -179,7 +191,7 @@ type
 
 implementation
 
-uses System.Win.Registry, Winapi.ShellAPI, Vcl.Forms, Winapi.TlHelp32;
+uses System.Win.Registry, Winapi.ShellAPI, Vcl.Forms, Winapi.TlHelp32, Clipbrd;
 
 constructor TLibraryHelper.Create;
 begin
@@ -288,6 +300,30 @@ begin
   end;
 end;
 
+function TLibraryHelper.GetLibraryPlatformName(ADelphiLibrary
+  : TDelphiLibrary): string;
+begin
+  Result := '';
+  case ADelphiLibrary of
+    dlAndroid32:
+      Result := 'android';
+    dlIOS32:
+      Result := 'iosdevice32';
+    dlIOS64:
+      Result := 'iosdevice64';
+    dlIOSimulator:
+      Result := 'iossimulator';
+    dlOSX32:
+      Result := 'osx32';
+    dlWin32:
+      Result := 'win32';
+    dlWin64:
+      Result := 'win64';
+    dlLinux64:
+      Result := 'linux64';
+  end;
+end;
+
 function TLibraryHelper.InstallationCount: integer;
 begin
   Result := FDelphiInstallationList.Count;
@@ -309,7 +345,7 @@ begin
       = UpperCase(AFileName)) or (UpperCase(FProcessEntry32.szExeFile)
       = UpperCase(AFileName))) then
     begin
-      Result := True;
+      Result := true;
     end;
     ContinueLoop := Process32Next(FSnapshotHandle, FProcessEntry32);
   end;
@@ -362,7 +398,7 @@ begin
 
   ApplyTemplatePaths(ALibraryPathTemplate.Common, FLibraryLinux64);
   ApplyTemplatePaths(ALibraryPathTemplate.CommonFMX, FLibraryLinux64);
-  ApplyTemplatePaths(ALibraryPathTemplate.CommonVCL, FLibraryWin64);
+  // ApplyTemplatePaths(ALibraryPathTemplate.CommonVCL, FLibraryWin64);
   ApplyTemplatePaths(ALibraryPathTemplate.Linux64, FLibraryLinux64);
 
 end;
@@ -374,7 +410,7 @@ var
 begin
   Result := False;
   LPath := APath;
-  LPath := ExpandLibraryPath(LPath);
+  LPath := ExpandLibraryPath(LPath, ALibrary);
   if (Trim(LPath) <> '') and (DirectoryExists(LPath)) then
   begin
     case ALibrary of
@@ -393,7 +429,7 @@ begin
       dlWin64:
         FLibraryWin64.Add(ExcludeTrailingPathDelimiter(APath));
     end;
-    Result := True;
+    Result := true;
   end;
 end;
 
@@ -418,7 +454,7 @@ var
 begin
   LPaths := TStringList.Create;
   try
-    ALibraryPaths.AsStringList(LPaths, True);
+    ALibraryPaths.AsStringList(LPaths, true);
     for LPathIdx := 0 to PreD(LPaths.Count) do
     begin
       ALibrary.Add(LPaths[LPathIdx]);
@@ -426,6 +462,17 @@ begin
   finally
     FreeAndNil(LPaths);
   end;
+end;
+
+procedure TDelphiInstallation.CopyToClipBoard(APath: string;
+  ALibrary: TDelphiLibrary; AExpand: boolean);
+var
+  LPath: string;
+begin
+  LPath := APath;
+  if AExpand then
+    LPath := ExpandLibraryPath(APath, ALibrary);
+  Clipboard.AsText := LPath;
 end;
 
 constructor TDelphiInstallation.Create(ARegistryKey: string);
@@ -447,30 +494,31 @@ function TDelphiInstallation.CreateLibraryStringList: TStringList;
 begin
   Result := TStringList.Create;
   Result.Duplicates := dupIgnore;
-  Result.Sorted := True;
+  Result.Sorted := true;
 end;
 
 procedure TDelphiInstallation.DeduplicateLibrary(ALibrary: TDelphiLibrary);
 begin
   case ALibrary of
     dlAndroid32:
-      DeduplicateLibraryPaths(FLibraryAndroid32);
+      DeduplicateLibraryPaths(FLibraryAndroid32, ALibrary);
     dlIOS32:
-      DeduplicateLibraryPaths(FLibraryIOS32);
+      DeduplicateLibraryPaths(FLibraryIOS32, ALibrary);
     dlIOS64:
-      DeduplicateLibraryPaths(FLibraryIOS64);
+      DeduplicateLibraryPaths(FLibraryIOS64, ALibrary);
     dlIOSimulator:
-      DeduplicateLibraryPaths(FLibraryIOSSimulator);
+      DeduplicateLibraryPaths(FLibraryIOSSimulator, ALibrary);
     dlOSX32:
-      DeduplicateLibraryPaths(FLibraryOSX32);
+      DeduplicateLibraryPaths(FLibraryOSX32, ALibrary);
     dlWin32:
-      DeduplicateLibraryPaths(FLibraryWin32);
+      DeduplicateLibraryPaths(FLibraryWin32, ALibrary);
     dlWin64:
-      DeduplicateLibraryPaths(FLibraryWin64);
+      DeduplicateLibraryPaths(FLibraryWin64, ALibrary);
   end;
 end;
 
-procedure TDelphiInstallation.DeduplicateLibraryPaths(ALibrary: TStrings);
+procedure TDelphiInstallation.DeduplicateLibraryPaths(ALibrary: TStrings;
+  ADelphiLibrary: TDelphiLibrary);
 var
   LLibrary: TStringList;
   LPath: string;
@@ -480,15 +528,15 @@ var
 begin
   LLibrary := TStringList.Create;
   LLibrary.Duplicates := dupIgnore;
-  LLibrary.Sorted := True;
+  LLibrary.Sorted := true;
   try
     LLibraryIdx := 0;
     while LLibraryIdx < ALibrary.Count do
     begin
-      LValid := True;
+      LValid := true;
       try
         LPath := ALibrary[LLibraryIdx];
-        LPath := ExpandLibraryPath(LPath);
+        LPath := ExpandLibraryPath(LPath, ADelphiLibrary);
 
         if (LLibrary.Find(LPath, LFindIdx)) or
           (LLibrary.Find(IncludeTrailingPathDelimiter(LPath), LFindIdx)) then
@@ -533,7 +581,8 @@ begin
   end;
 end;
 
-function TDelphiInstallation.ExpandLibraryPath(APath: string): string;
+function TDelphiInstallation.ExpandLibraryPath(APath: string;
+  ALibrary: TDelphiLibrary): string;
 var
   LVariableIdx: integer;
 begin
@@ -547,6 +596,31 @@ begin
   end;
   Result := ExcludeTrailingPathDelimiter(StringReplace(Result, '$(BDS)',
     GetRootPath, [rfReplaceAll, rfIgnoreCase]));
+  Result := ExcludeTrailingPathDelimiter(StringReplace(Result, '$(Platform)',
+    GetLibraryPlatformName(ALibrary), [rfReplaceAll, rfIgnoreCase]));
+end;
+
+procedure TDelphiInstallation.LibraryAsStrings(AStrings: TStrings;
+  ADelphiLibrary: TDelphiLibrary);
+begin
+  case ADelphiLibrary of
+    dlAndroid32:
+      AStrings.Text := GetLibraryAndroid32;
+    dlIOS32:
+      AStrings.Text := GetLibraryIOS32;
+    dlIOS64:
+      AStrings.Text := GetLibraryIOS64;
+    dlIOSimulator:
+      AStrings.Text := GetLibraryIOSSimulator;
+    dlOSX32:
+      AStrings.Text := GetLibraryOSX32;
+    dlWin32:
+      AStrings.Text := GetLibraryWin32;
+    dlWin64:
+      AStrings.Text := GetLibraryWin64;
+    dlLinux64:
+      AStrings.Text := GetLibraryLinux64;
+  end;
 end;
 
 procedure TDelphiInstallation.Load;
@@ -589,15 +663,19 @@ end;
 
 procedure TDelphiInstallation.LoadLibraries;
 begin
-  SetLibraryPathFromDelimited(LoadLibrary('Android32'), FLibraryAndroid32);
-  SetLibraryPathFromDelimited(LoadLibrary('iOSDevice32'), FLibraryIOS32);
-  SetLibraryPathFromDelimited(LoadLibrary('iOSDevice64'), FLibraryIOS64);
-  SetLibraryPathFromDelimited(LoadLibrary('iOSSimulator'),
-    FLibraryIOSSimulator);
-  SetLibraryPathFromDelimited(LoadLibrary('OSX32'), FLibraryOSX32);
-  SetLibraryPathFromDelimited(LoadLibrary('Win32'), FLibraryWin32);
-  SetLibraryPathFromDelimited(LoadLibrary('Win64'), FLibraryWin64);
-  SetLibraryPathFromDelimited(LoadLibrary('Linux64'), FLibraryLinux64);
+  SetLibraryPathFromDelimited(LoadLibrary('Android32'), FLibraryAndroid32,
+    dlAndroid32);
+  SetLibraryPathFromDelimited(LoadLibrary('iOSDevice32'),
+    FLibraryIOS32, dlIOS32);
+  SetLibraryPathFromDelimited(LoadLibrary('iOSDevice64'),
+    FLibraryIOS64, dlIOS64);
+  SetLibraryPathFromDelimited(LoadLibrary('iOSSimulator'), FLibraryIOSSimulator,
+    dlIOSimulator);
+  SetLibraryPathFromDelimited(LoadLibrary('OSX32'), FLibraryOSX32, dlOSX32);
+  SetLibraryPathFromDelimited(LoadLibrary('Win32'), FLibraryWin32, dlWin32);
+  SetLibraryPathFromDelimited(LoadLibrary('Win64'), FLibraryWin64, dlWin64);
+  SetLibraryPathFromDelimited(LoadLibrary('Linux64'), FLibraryLinux64,
+    dlLinux64);
 end;
 
 function TDelphiInstallation.GetInstalled: boolean;
@@ -697,12 +775,13 @@ begin
   end;
 end;
 
-function TDelphiInstallation.OpenFolder(AFolder: string): boolean;
+function TDelphiInstallation.OpenFolder(AFolder: string;
+  ALibrary: TDelphiLibrary): boolean;
 var
   LFolder: string;
 begin
   LFolder := AFolder;
-  LFolder := ExpandLibraryPath(LFolder);
+  LFolder := ExpandLibraryPath(LFolder, ALibrary);
   Result := ExecuteFile('open', PChar('explorer.exe'), PChar(LFolder), '',
     SW_SHOWNORMAL) > 32;
 end;
@@ -740,6 +819,18 @@ end;
 function TDelphiInstallation.GetLibraryLinux64: string;
 begin
   Result := GetLibraryPathAsString(FLibraryLinux64);
+end;
+
+function TDelphiInstallation.GetLibraryName(ALibrary: TDelphiLibrary): string;
+var
+  LLibraryHelper: TLibraryHelper;
+begin
+  LLibraryHelper := TLibraryHelper.Create;
+  try
+    Result := LLibraryHelper.GetLibraryName(ALibrary);
+  finally
+    FreeAndNil(LLibraryHelper);
+  end;
 end;
 
 function TDelphiInstallation.GetLibraryOSX32: string;
@@ -879,7 +970,7 @@ begin
     LLibraryKey := IncludeTrailingBackslash
       (LLibraryKey + 'Environment Variables');
     LRegistry.DeleteKey(LLibraryKey);
-    if LRegistry.OpenKey(LLibraryKey, True) then
+    if LRegistry.OpenKey(LLibraryKey, true) then
     begin
       for LIdx := 0 to PreD(FEnvironmentVariables.Count) do
       begin
@@ -903,6 +994,7 @@ begin
   SaveLibrary('OSX32', GetLibraryPathDelimited(FLibraryOSX32));
   SaveLibrary('Win32', GetLibraryPathDelimited(FLibraryWin32));
   SaveLibrary('Win64', GetLibraryPathDelimited(FLibraryWin64));
+  SaveLibrary('Linux64', GetLibraryPathDelimited(FLibraryLinux64));
 end;
 
 procedure TDelphiInstallation.SaveLibrary(ALibrary, AValue: string);
@@ -928,53 +1020,54 @@ end;
 
 procedure TDelphiInstallation.SetLibraryAndroid32(const Value: string);
 begin
-  SetLibraryPathFromString(Value, FLibraryAndroid32);
+  SetLibraryPathFromString(Value, FLibraryAndroid32, dlAndroid32);
 end;
 
 procedure TDelphiInstallation.SetLibraryIOS32(const Value: string);
 begin
-  SetLibraryPathFromString(Value, FLibraryIOS32);
+  SetLibraryPathFromString(Value, FLibraryIOS32, dlIOS32);
 end;
 
 procedure TDelphiInstallation.SetLibraryIOS64(const Value: string);
 begin
-  SetLibraryPathFromString(Value, FLibraryIOS64);
+  SetLibraryPathFromString(Value, FLibraryIOS64, dlIOS64);
 end;
 
 procedure TDelphiInstallation.SetLibraryIOSSimulator(const Value: string);
 begin
-  SetLibraryPathFromString(Value, FLibraryIOSSimulator);
+  SetLibraryPathFromString(Value, FLibraryIOSSimulator, dlIOSimulator);
 end;
 
 procedure TDelphiInstallation.SetLibraryLinux64(const Value: string);
 begin
-  SetLibraryPathFromString(Value, FLibraryLinux64);
+  SetLibraryPathFromString(Value, FLibraryLinux64, dlLinux64);
 end;
 
 procedure TDelphiInstallation.SetLibraryOSX32(const Value: string);
 begin
-  SetLibraryPathFromString(Value, FLibraryOSX32);
+  SetLibraryPathFromString(Value, FLibraryOSX32, dlOSX32);
 end;
 
 procedure TDelphiInstallation.SetLibraryPathFromString(AString: string;
-  AStrings: TStrings);
+  AStrings: TStrings; ALibrary: TDelphiLibrary);
 begin
   AStrings.Text := AString;
-  ValidateLibraryPaths(AStrings);
-  DeduplicateLibraryPaths(AStrings);
+  ValidateLibraryPaths(AStrings, ALibrary);
+  DeduplicateLibraryPaths(AStrings, ALibrary);
 end;
 
 procedure TDelphiInstallation.SetLibraryWin32(const Value: string);
 begin
-  SetLibraryPathFromString(Value, FLibraryWin32);
+  SetLibraryPathFromString(Value, FLibraryWin32, dlWin32);
 end;
 
 procedure TDelphiInstallation.SetLibraryWin64(const Value: string);
 begin
-  SetLibraryPathFromString(Value, FLibraryWin64);
+  SetLibraryPathFromString(Value, FLibraryWin64, dlWin64);
 end;
 
-procedure TDelphiInstallation.ValidateLibraryPaths(ALibrary: TStrings);
+procedure TDelphiInstallation.ValidateLibraryPaths(ALibrary: TStrings;
+  ADelphiLibrary: TDelphiLibrary);
 var
   LLibraryPaths: TStringList;
   LPath: string;
@@ -986,10 +1079,10 @@ begin
     LLibraryIdx := 0;
     while LLibraryIdx < ALibrary.Count do
     begin
-      LValid := True;
+      LValid := true;
       try
         LPath := ALibrary[LLibraryIdx];
-        LPath := ExpandLibraryPath(LPath);
+        LPath := ExpandLibraryPath(LPath, ADelphiLibrary);
         LValid := (Trim(LPath) <> ''); // and (DirectoryExists(LPath));
       finally
         if LValid then
@@ -1026,8 +1119,21 @@ begin
   end;
 end;
 
+function TDelphiInstallation.GetLibraryPlatformName
+  (ALibrary: TDelphiLibrary): string;
+var
+  LLibraryHelper: TLibraryHelper;
+begin
+  LLibraryHelper := TLibraryHelper.Create;
+  try
+    Result := LLibraryHelper.GetLibraryPlatformName(ALibrary);
+  finally
+    FreeAndNil(LLibraryHelper);
+  end;
+end;
+
 procedure TDelphiInstallation.SetLibraryPathFromDelimited(AString: string;
-  AStrings: TStrings);
+  AStrings: TStrings; ALibrary: TDelphiLibrary);
 var
   LPath: string;
   LPaths: TStringList;
@@ -1043,8 +1149,8 @@ begin
     begin
       AStrings.Add(ExcludeTrailingPathDelimiter(LPaths[LIdx]));
     end;
-    ValidateLibraryPaths(AStrings);
-    DeduplicateLibraryPaths(AStrings);
+    ValidateLibraryPaths(AStrings, ALibrary);
+    DeduplicateLibraryPaths(AStrings, ALibrary);
   finally
     FreeAndNil(LPaths);
   end;
