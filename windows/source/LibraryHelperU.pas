@@ -104,6 +104,9 @@ type
     function GetLibraryLinux64: string;
     procedure SetLibraryLinux64(const Value: string);
     function GetRootPath: string;
+    function GetBinPath: string;
+    function GetBDSPublicFolder(AFolder: string): string;
+    function GetBDSUserFolder(AFolder: string): string;
 
     function GetLibraryPathAsString(AStrings: TStrings): string;
     procedure SetLibraryPathFromString(AString: string; AStrings: TStrings;
@@ -113,6 +116,7 @@ type
       ALibrary: TDelphiLibrary);
     function CreateLibraryStringList: TStringList;
     function GetProductVersion: integer;
+    function GetStudioVersion: integer;
     procedure ApplyTemplatePaths(ALibraryPaths: TLibraryPaths;
       ALibrary: TStrings);
     function GetAllEnvironemntVariables(const Vars: TStrings): integer;
@@ -123,6 +127,10 @@ type
       ADelphiLibrary: TDelphiLibrary);
     function ExecuteFile(const Operation, FileName, Params, DefaultDir: string;
       ShowCmd: word): integer;
+    function GetUserProfileFolder: string;
+    function GetShellFolderPath(AFolder: integer): string;
+    function GetDocumentFolder: string;
+    function GetPublicDocumentFolder: string;
   public
     constructor Create(ARegistryKey: string);
     destructor Destroy; override;
@@ -191,7 +199,8 @@ type
 
 implementation
 
-uses System.Win.Registry, Winapi.ShellAPI, Vcl.Forms, Winapi.TlHelp32, Clipbrd;
+uses System.Win.Registry, Winapi.ShellAPI, Vcl.Forms, Winapi.TlHelp32, Clipbrd,
+  Winapi.ShlObj;
 
 constructor TLibraryHelper.Create;
 begin
@@ -581,12 +590,88 @@ begin
   end;
 end;
 
+function TDelphiInstallation.GetShellFolderPath(AFolder: integer): string;
+const
+  SHGFP_TYPE_CURRENT = 0;
+var
+  path: array [0 .. MAX_PATH] of char;
+begin
+  if SUCCEEDED(SHGetFolderPath(0, AFolder, 0, SHGFP_TYPE_CURRENT, @path[0]))
+  then
+    Result := path
+  else
+    Result := '';
+end;
+
+function TDelphiInstallation.GetStudioVersion: integer;
+var
+  LPath: string;
+begin
+  LPath := GetRootPath;
+  LPath := ExcludeTrailingPathDelimiter(LPath);
+  LPath := ExtractFileName(LPath);
+  LPath := ChangeFileExt(LPath, '');
+  Result := StrToIntDef(LPath, 0);
+end;
+
+function TDelphiInstallation.GetUserProfileFolder: string;
+begin
+  Result := IncludeTrailingPathDelimiter(GetShellFolderPath(CSIDL_PROFILE));
+end;
+
+function TDelphiInstallation.GetDocumentFolder: string;
+begin
+  Result := IncludeTrailingPathDelimiter(GetShellFolderPath(CSIDL_PERSONAL));
+end;
+
+function TDelphiInstallation.GetPublicDocumentFolder: string;
+begin
+  Result := IncludeTrailingPathDelimiter
+    (GetShellFolderPath(CSIDL_COMMON_DOCUMENTS));
+end;
+
 function TDelphiInstallation.ExpandLibraryPath(APath: string;
   ALibrary: TDelphiLibrary): string;
 var
   LVariableIdx: integer;
 begin
   Result := APath;
+
+  Result := ExcludeTrailingPathDelimiter(StringReplace(Result, '$(BDSBIN)',
+    GetBinPath, [rfReplaceAll, rfIgnoreCase]));
+
+  Result := ExcludeTrailingPathDelimiter(StringReplace(Result,
+    '$(BDSCatalogRepositoryAllUsers)', GetBDSPublicFolder('CatalogRepository'),
+    [rfReplaceAll, rfIgnoreCase]));
+
+  Result := ExcludeTrailingPathDelimiter(StringReplace(Result,
+    '$(BDSCatalogRepository)', GetBDSUserFolder('CatalogRepository'),
+    [rfReplaceAll, rfIgnoreCase]));
+
+  Result := ExcludeTrailingPathDelimiter(StringReplace(Result, '$(BDSLIB)',
+    GetRootPath + 'lib', [rfReplaceAll, rfIgnoreCase]));
+
+  Result := ExcludeTrailingPathDelimiter(StringReplace(Result, '$(BDSINCLUDE)',
+    GetRootPath + 'include', [rfReplaceAll, rfIgnoreCase]));
+
+  Result := ExcludeTrailingPathDelimiter(StringReplace(Result,
+    '$(BDSCOMMONDIR)', GetBDSPublicFolder(''), [rfReplaceAll, rfIgnoreCase]));
+
+  Result := ExcludeTrailingPathDelimiter(StringReplace(Result,
+    '$(BDSPLATFORMSDKDIR)', GetBDSUserFolder('SDKs'),
+    [rfReplaceAll, rfIgnoreCase]));
+
+  Result := ExcludeTrailingPathDelimiter(StringReplace(Result,
+    '$(BDSPROFILESDIR)', GetBDSUserFolder('Profiles'),
+    [rfReplaceAll, rfIgnoreCase]));
+
+  Result := ExcludeTrailingPathDelimiter(StringReplace(Result,
+    '$(BDSPROJECTSDIR)', GetBDSUserFolder('Profiles'),
+    [rfReplaceAll, rfIgnoreCase]));
+
+  Result := ExcludeTrailingPathDelimiter(StringReplace(Result, '$(BDSUSERDIR)',
+    GetBDSUserFolder(''), [rfReplaceAll, rfIgnoreCase]));
+
   for LVariableIdx := 0 to PreD(FSystemEnvironmentVariables.Count) do
   begin
     Result := ExcludeTrailingPathDelimiter(StringReplace(Result,
@@ -594,6 +679,15 @@ begin
       ), FSystemEnvironmentVariables.Variable[LVariableIdx].Value,
       [rfReplaceAll, rfIgnoreCase]));
   end;
+
+  for LVariableIdx := 0 to PreD(FEnvironmentVariables.Count) do
+  begin
+    Result := ExcludeTrailingPathDelimiter(StringReplace(Result,
+      Format('$(%s)', [FEnvironmentVariables.Variable[LVariableIdx].Name]),
+      FEnvironmentVariables.Variable[LVariableIdx].Value,
+      [rfReplaceAll, rfIgnoreCase]));
+  end;
+
   Result := ExcludeTrailingPathDelimiter(StringReplace(Result, '$(BDS)',
     GetRootPath, [rfReplaceAll, rfIgnoreCase]));
   Result := ExcludeTrailingPathDelimiter(StringReplace(Result, '$(Platform)',
@@ -754,6 +848,46 @@ begin
   else
     // No block => zero length
     Result := 0;
+end;
+
+function TDelphiInstallation.GetBDSPublicFolder(AFolder: string): string;
+begin
+  Result := GetPublicDocumentFolder;
+  Result := IncludeTrailingPathDelimiter(Result + 'Embarcadero\Studio');
+  Result := IncludeTrailingPathDelimiter
+    (Result + IntToStr(GetStudioVersion) + '.0');
+  if Trim(AFolder) <> '' then
+    Result := IncludeTrailingPathDelimiter(Result + AFolder);
+  Result := ExcludeTrailingPathDelimiter(Result);
+end;
+
+function TDelphiInstallation.GetBDSUserFolder(AFolder: string): string;
+begin
+  Result := GetDocumentFolder;
+  Result := IncludeTrailingPathDelimiter(Result + 'Embarcadero\Studio');
+  Result := IncludeTrailingPathDelimiter
+    (Result + IntToStr(GetStudioVersion) + '.0');
+  if Trim(AFolder) <> '' then
+    Result := IncludeTrailingPathDelimiter(Result + AFolder);
+  Result := ExcludeTrailingPathDelimiter(Result);
+end;
+
+function TDelphiInstallation.GetBinPath: string;
+var
+  LRegistry: TRegistry;
+begin
+  Result := '';
+  LRegistry := TRegistry.Create;
+  try
+    LRegistry.RootKey := HKEY_CURRENT_USER;
+    if LRegistry.OpenKeyReadOnly(FRegistryKey) then
+    begin
+      Result := IncludeTrailingPathDelimiter
+        (ExtractFilePath(LRegistry.ReadString('App')));
+    end;
+  finally
+    FreeAndNil(LRegistry);
+  end;
 end;
 
 procedure TDelphiInstallation.LoadSystemEnvironmentVariables;
@@ -941,7 +1075,7 @@ begin
     LRegistry.RootKey := HKEY_CURRENT_USER;
     if LRegistry.OpenKeyReadOnly(FRegistryKey) then
     begin
-      Result := LRegistry.ReadString('RootDir');
+      Result := IncludeTrailingPathDelimiter(LRegistry.ReadString('RootDir'));
     end;
   finally
     FreeAndNil(LRegistry);
