@@ -8,16 +8,15 @@ uses
   SysUtils,
   Printers,
   System.UITypes,
-  frmDelphiLibraryHelperU
-    in 'frmDelphiLibraryHelperU.pas' {frmDelphiLibraryHelper} ,
+  frmDelphiLibraryHelperU in 'frmDelphiLibraryHelperU.pas' {frmDelphiLibraryHelper},
   LibraryPathsU in 'LibraryPathsU.pas',
   LibraryHelperU in 'LibraryHelperU.pas',
-  frmAddLibraryPathU in 'frmAddLibraryPathU.pas' {frmAddLibraryPath} ,
-  frmAddEnvironmentVariableU
-    in 'frmAddEnvironmentVariableU.pas' {frmAddEnvironmentVariable} ,
-  frmAboutU in 'frmAboutU.pas' {frmAbout} ,
+  frmAddLibraryPathU in 'frmAddLibraryPathU.pas' {frmAddLibraryPath},
+  frmAddEnvironmentVariableU in 'frmAddEnvironmentVariableU.pas' {frmAddEnvironmentVariable},
+  frmAboutU in 'frmAboutU.pas' {frmAbout},
   FileVersionInformationU in 'FileVersionInformationU.pas',
-  frmFindReplaceU in 'frmFindReplaceU.pas' {frmFindReplace};
+  frmFindReplaceU in 'frmFindReplaceU.pas' {frmFindReplace},
+  frmSearchU in 'frmSearchU.pas' {frmSearch};
 
 {$R *.res}
 

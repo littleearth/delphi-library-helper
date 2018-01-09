@@ -77,6 +77,25 @@ type
     comboDelphiInstallations: TComboBox;
     lblRootPath: TLabel;
     Panel7: TPanel;
+    ActionSearch: TAction;
+    BitBtn10: TBitBtn;
+    Search1: TMenuItem;
+    ActionSystemProperties: TAction;
+    BitBtn11: TBitBtn;
+    Splitter1: TSplitter;
+    ActionExport: TAction;
+    ActionImport: TAction;
+    GroupBox4: TGroupBox;
+    BitBtn17: TBitBtn;
+    BitBtn18: TBitBtn;
+    BitBtn12: TBitBtn;
+    BitBtn13: TBitBtn;
+    BitBtn14: TBitBtn;
+    BitBtn15: TBitBtn;
+    Export1: TMenuItem;
+    Import1: TMenuItem;
+    ImportExport1: TMenuItem;
+    SystemProperties1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -109,6 +128,10 @@ type
       var DefaultDraw: Boolean);
     procedure ActionCopyLibraryValueExecute(Sender: TObject);
     procedure lblRootPathClick(Sender: TObject);
+    procedure ActionSearchExecute(Sender: TObject);
+    procedure ActionSystemPropertiesExecute(Sender: TObject);
+    procedure ActionExportExecute(Sender: TObject);
+    procedure ActionImportExecute(Sender: TObject);
   private
     FApplicationActive: Boolean;
     FModified: Boolean;
@@ -122,6 +145,10 @@ type
     procedure SaveLibrary;
     procedure LoadSystemEnvironmentVariables;
     function ValidatePath(APath: string): Boolean;
+    procedure ProcessParameters;
+    procedure ApplyTemplate(AFileName: TFileName);
+    function GetApplicationParameters(AParameter: string;
+      var AValue: string): Boolean;
   public
     { Public declarations }
   end;
@@ -134,7 +161,8 @@ implementation
 {$R *.dfm}
 
 uses
-  frmAddLibraryPathU, frmAddEnvironmentVariableU, frmAboutU, frmFindReplaceU;
+  frmAddLibraryPathU, frmAddEnvironmentVariableU, frmAboutU, frmFindReplaceU,
+  frmSearchU;
 
 procedure TfrmDelphiLibraryHelper.ActionAboutExecute(Sender: TObject);
 begin
@@ -194,9 +222,7 @@ begin
     LOpenDialog.InitialDir := ExtractFilePath(ParamStr(0));
     if LOpenDialog.Execute then
     begin
-      FDelphiInstallation.Apply(LOpenDialog.FileName);
-      comboLibrariesChange(nil);
-      FModified := True;
+      ApplyTemplate(LOpenDialog.FileName);
     end;
   finally
     FreeAndNil(LOpenDialog);
@@ -220,7 +246,7 @@ end;
 
 procedure TfrmDelphiLibraryHelper.ActionCopyLibraryPathUpdate(Sender: TObject);
 begin
-  ActionCopyLibraryPath.Enabled := Assigned(FDelphiInstallation) and
+  (Sender as TAction).Enabled := Assigned(FDelphiInstallation) and
     Assigned(ListViewLibrary.Selected);
 end;
 
@@ -273,6 +299,28 @@ begin
   Self.Close;
 end;
 
+procedure TfrmDelphiLibraryHelper.ActionExportExecute(Sender: TObject);
+var
+  LSaveDialog: TSaveDialog;
+begin
+  LSaveDialog := TSaveDialog.Create(Self);
+  try
+    LSaveDialog.DefaultExt := '.dlhe';
+    LSaveDialog.Filter :=
+      'Delphi Library Helper Template (*.dlhe)|*.dlhe|All Files (*.*)|*' + '.*';
+    LSaveDialog.Options := [ofHideReadOnly, ofEnableSizing];
+    LSaveDialog.InitialDir := ExtractFilePath(ParamStr(0));
+    if LSaveDialog.Execute then
+    begin
+      FDelphiInstallation.ExportLibrary(LSaveDialog.FileName);
+      FDelphiInstallation.OpenFolder(ExtractFilePath(LSaveDialog.FileName),
+        FActiveDelphiLibrary);
+    end;
+  finally
+    FreeAndNil(LSaveDialog);
+  end;
+end;
+
 procedure TfrmDelphiLibraryHelper.ActionFindReplaceExecute(Sender: TObject);
 var
   LFindReplace: TfrmFindReplace;
@@ -286,6 +334,28 @@ begin
     end;
   finally
     FreeAndNil(LFindReplace);
+  end;
+end;
+
+procedure TfrmDelphiLibraryHelper.ActionImportExecute(Sender: TObject);
+var
+  LOpenDialog: TOpenDialog;
+begin
+  LOpenDialog := TOpenDialog.Create(Self);
+  try
+    LOpenDialog.DefaultExt := '.dlhe';
+    LOpenDialog.Filter :=
+      'Delphi Library Helper Template (*.dlhe)|*.dlhe|All Files (*.*)|*' + '.*';
+    LOpenDialog.Options := [ofHideReadOnly, ofFileMustExist, ofEnableSizing];
+    LOpenDialog.InitialDir := ExtractFilePath(ParamStr(0));
+    if LOpenDialog.Execute then
+    begin
+      FDelphiInstallation.ImportLibrary(LOpenDialog.FileName);
+      comboLibrariesChange(nil);
+      FModified := True;
+    end;
+  finally
+    FreeAndNil(LOpenDialog);
   end;
 end;
 
@@ -370,6 +440,32 @@ begin
   ActionSave.Enabled := (Assigned(FDelphiInstallation)) and (FModified);
 end;
 
+procedure TfrmDelphiLibraryHelper.ActionSearchExecute(Sender: TObject);
+var
+  LfrmSearch: TfrmSearch;
+begin
+  LfrmSearch := TfrmSearch.Create(Self);
+  try
+    LfrmSearch.Execute(FDelphiInstallation);
+  finally
+    FreeAndNil(LfrmSearch);
+  end;
+end;
+
+procedure TfrmDelphiLibraryHelper.ActionSystemPropertiesExecute
+  (Sender: TObject);
+begin
+  FDelphiInstallation.ExecuteFile('open', 'SystemPropertiesAdvanced', '', '',
+    SW_SHOWNORMAL);
+end;
+
+procedure TfrmDelphiLibraryHelper.ApplyTemplate(AFileName: TFileName);
+begin
+  FDelphiInstallation.Apply(AFileName);
+  comboLibrariesChange(nil);
+  FModified := True;
+end;
+
 procedure TfrmDelphiLibraryHelper.comboDelphiInstallationsChange
   (Sender: TObject);
 begin
@@ -391,6 +487,7 @@ begin
   begin
     FApplicationActive := True;
     LoadDelphiInstallation;
+    ProcessParameters;
   end;
 end;
 
@@ -554,6 +651,53 @@ begin
   end;
 end;
 
+function TfrmDelphiLibraryHelper.GetApplicationParameters(AParameter: string;
+  var AValue: string): Boolean;
+var
+  LParamIdx: integer;
+begin
+  Result := False;
+  LParamIdx := 1;
+  While (LParamIdx <= ParamCount) and (not Result) do
+  begin
+    try
+      if Pos(AParameter, ParamStr(LParamIdx)) = 1 then
+      begin
+        AValue := ParamStr(LParamIdx);
+        AValue := StringReplace(AValue, AParameter + ':', '',
+          [rfReplaceAll, rfIgnoreCase]);
+        AValue := StringReplace(AValue, AParameter, '',
+          [rfReplaceAll, rfIgnoreCase]);
+        AValue := AnsiDequotedStr(AValue, '"');
+        Result := True;
+      end;
+    finally
+      Inc(LParamIdx);
+    end;
+  end;
+end;
+
+procedure TfrmDelphiLibraryHelper.ProcessParameters;
+var
+  LParam: string;
+begin
+  if GetApplicationParameters('/TEMPLATE', LParam) then
+  begin
+    if FileExists(LParam) then
+    begin
+      ApplyTemplate(LParam);
+
+      if GetApplicationParameters('/CLOSE', LParam) then
+      begin
+        ActionSave.Execute;
+        Application.Terminate;
+      end;
+
+    end;
+  end;
+
+end;
+
 procedure TfrmDelphiLibraryHelper.SaveEnvironmentVariables;
 var
   LIdx: integer;
@@ -609,6 +753,7 @@ procedure TfrmDelphiLibraryHelper.LoadLibrary;
 var
   LLibrary: TStringList;
   LIdx: integer;
+  LLibraryEntry, LLibraryPath: string;
 begin
   ListViewLibrary.Clear;
   if Assigned(FDelphiInstallation) then
@@ -636,9 +781,20 @@ begin
       end;
       for LIdx := 0 to Pred(LLibrary.Count) do
       begin
+        LLibraryEntry := LLibrary[LIdx];
+        LLibraryPath := FDelphiInstallation.ExpandLibraryPath(LLibraryEntry,
+          FActiveDelphiLibrary);
+
+        if not DirectoryExists(LLibraryPath) then
+        begin
+          LLibraryPath := '*' + LLibraryPath;
+        end;
+
         with ListViewLibrary.Items.Add do
         begin
-          Caption := LLibrary[LIdx];
+          Caption := LLibraryEntry;
+
+          SubItems.Add(LLibraryPath);
         end;
       end;
     finally

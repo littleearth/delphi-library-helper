@@ -125,8 +125,7 @@ type
       ADelphiLibrary: TDelphiLibrary);
     procedure DeduplicateLibraryPaths(ALibrary: TStrings;
       ADelphiLibrary: TDelphiLibrary);
-    function ExecuteFile(const Operation, FileName, Params, DefaultDir: string;
-      ShowCmd: word): integer;
+
     function GetUserProfileFolder: string;
     function GetShellFolderPath(AFolder: integer): string;
     function GetDocumentFolder: string;
@@ -136,15 +135,20 @@ type
     destructor Destroy; override;
     procedure Load;
     procedure Save;
+    procedure ExportLibrary(AFileName: TFileName);
+    procedure ImportLibrary(AFileName: TFileName);
     procedure Apply(ALibraryPathTemplate: TLibraryPathTemplate); overload;
     procedure Apply(AFileName: TFileName); overload;
     function AddPath(APath: string; ALibrary: TDelphiLibrary): boolean;
     procedure DeduplicateLibrary(ALibrary: TDelphiLibrary);
     function OpenFolder(AFolder: string; ALibrary: TDelphiLibrary): boolean;
+    function ExecuteFile(const Operation, FileName, Params, DefaultDir: string;
+      ShowCmd: word): integer;
     function GetLibraryName(ALibrary: TDelphiLibrary): string;
     function GetLibraryPlatformName(ALibrary: TDelphiLibrary): string;
     procedure CopyToClipBoard(APath: string; ALibrary: TDelphiLibrary;
       AExpand: boolean = true);
+    procedure ForceEnvOptionsUpdate;
     function ExpandLibraryPath(APath: string; ALibrary: TDelphiLibrary): string;
     property Installed: boolean read GetInstalled;
     property ProductVersion: integer read GetProductVersion;
@@ -200,7 +204,7 @@ type
 implementation
 
 uses System.Win.Registry, Winapi.ShellAPI, Vcl.Forms, Winapi.TlHelp32, Clipbrd,
-  Winapi.ShlObj;
+  Winapi.ShlObj, System.IniFiles;
 
 constructor TLibraryHelper.Create;
 begin
@@ -460,13 +464,15 @@ procedure TDelphiInstallation.ApplyTemplatePaths(ALibraryPaths: TLibraryPaths;
 var
   LPaths: TStringList;
   LPathIdx: integer;
+  LPath: string;
 begin
   LPaths := TStringList.Create;
   try
     ALibraryPaths.AsStringList(LPaths, true);
     for LPathIdx := 0 to PreD(LPaths.Count) do
     begin
-      ALibrary.Add(LPaths[LPathIdx]);
+      LPath := ExcludeTrailingPathDelimiter(LPaths[LPathIdx]);
+      ALibrary.Add(LPath);
     end;
   finally
     FreeAndNil(LPaths);
@@ -694,6 +700,112 @@ begin
     GetLibraryPlatformName(ALibrary), [rfReplaceAll, rfIgnoreCase]));
 end;
 
+procedure TDelphiInstallation.ExportLibrary(AFileName: TFileName);
+var
+  LINIfile: TINIFile;
+
+  procedure ExportDelphiLibrary(ALibrary: TDelphiLibrary);
+  var
+    LLibrary: TStringList;
+    LLibraryName: string;
+    LPath: string;
+  begin
+    LLibrary := TStringList.Create;
+    try
+      LLibraryName := GetLibraryName(ALibrary);
+      LibraryAsStrings(LLibrary, ALibrary);
+
+      LINIfile.EraseSection(LLibraryName);
+
+      for LPath in LLibrary do
+      begin
+        LINIfile.WriteString(LLibraryName, LPath, '');
+      end;
+    finally
+      FreeAndNil(LLibrary);
+    end;
+  end;
+
+begin
+  if FileExists(AFileName) then
+    DeleteFile(AFileName);
+  LINIfile := TINIFile.Create(AFileName);
+  try
+    ExportDelphiLibrary(dlAndroid32);
+    ExportDelphiLibrary(dlIOS32);
+    ExportDelphiLibrary(dlIOS64);
+    ExportDelphiLibrary(dlIOSimulator);
+    ExportDelphiLibrary(dlOSX32);
+    ExportDelphiLibrary(dlWin32);
+    ExportDelphiLibrary(dlWin64);
+    ExportDelphiLibrary(dlLinux64);
+  finally
+    FreeAndNil(LINIfile);
+  end;
+end;
+
+procedure TDelphiInstallation.ImportLibrary(AFileName: TFileName);
+var
+  LINIfile: TINIFile;
+
+  procedure ImportDelphiLibrary(ALibrary: TDelphiLibrary);
+  var
+    LLibrary: TStringList;
+    LLibraryName: string;
+    LPath: string;
+  begin
+    LLibrary := TStringList.Create;
+    try
+      LLibraryName := GetLibraryName(ALibrary);
+      LINIfile.ReadSection(LLibraryName, LLibrary);
+
+      for LPath in LLibrary do
+      begin
+        AddPath(LPath, ALibrary);
+      end;
+    finally
+      FreeAndNil(LLibrary);
+    end;
+  end;
+
+begin
+  if FileExists(AFileName) then
+  begin
+    LINIfile := TINIFile.Create(AFileName);
+    try
+      ImportDelphiLibrary(dlAndroid32);
+      ImportDelphiLibrary(dlIOS32);
+      ImportDelphiLibrary(dlIOS64);
+      ImportDelphiLibrary(dlIOSimulator);
+      ImportDelphiLibrary(dlOSX32);
+      ImportDelphiLibrary(dlWin32);
+      ImportDelphiLibrary(dlWin64);
+      ImportDelphiLibrary(dlLinux64);
+    finally
+      FreeAndNil(LINIfile);
+    end;
+  end;
+end;
+
+procedure TDelphiInstallation.ForceEnvOptionsUpdate;
+var
+  LRegistry: TRegistry;
+  LRegistryKey: string;
+begin
+  LRegistry := TRegistry.Create;
+  try
+    LRegistry.RootKey := HKEY_CURRENT_USER;
+    LRegistryKey := IncludeTrailingBackslash(FRegistryKey);
+    LRegistryKey := IncludeTrailingBackslash(LRegistryKey + 'Globals');
+    if LRegistry.OpenKey(LRegistryKey, False) then
+    begin
+      LRegistry.WriteInteger('ForceEnvOptionsUpdate', 1);
+    end;
+  finally
+    FreeAndNil(LRegistry);
+  end;
+end;
+
 procedure TDelphiInstallation.LibraryAsStrings(AStrings: TStrings;
   ADelphiLibrary: TDelphiLibrary);
 begin
@@ -914,10 +1026,14 @@ function TDelphiInstallation.OpenFolder(AFolder: string;
 var
   LFolder: string;
 begin
+  Result := False;
   LFolder := AFolder;
   LFolder := ExpandLibraryPath(LFolder, ALibrary);
-  Result := ExecuteFile('open', PChar('explorer.exe'), PChar(LFolder), '',
-    SW_SHOWNORMAL) > 32;
+  if DirectoryExists(LFolder) then
+  begin
+    Result := ExecuteFile('open', PChar('explorer.exe'), PChar(LFolder), '',
+      SW_SHOWNORMAL) > 32;
+  end;
 end;
 
 function TDelphiInstallation.ExecuteFile(const Operation, FileName, Params,
@@ -1086,6 +1202,7 @@ procedure TDelphiInstallation.Save;
 begin
   SaveEnvironmentVariables;
   SaveLibraries;
+  ForceEnvOptionsUpdate;
 end;
 
 procedure TDelphiInstallation.SaveEnvironmentVariables;
