@@ -24,7 +24,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
     Align = alTop
     Caption = 'Delphi Installation'
     TabOrder = 0
-    ExplicitWidth = 761
     object BitBtn4: TBitBtn
       AlignWithMargins = True
       Left = 623
@@ -166,8 +165,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
         FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
         FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
       TabOrder = 4
-      ExplicitLeft = 461
-      ExplicitTop = 20
     end
     object BitBtn7: TBitBtn
       AlignWithMargins = True
@@ -310,7 +307,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
         FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
         FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
       TabOrder = 2
-      ExplicitLeft = 444
     end
     object BitBtn8: TBitBtn
       AlignWithMargins = True
@@ -453,7 +449,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
         FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
         FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
       TabOrder = 3
-      ExplicitLeft = 525
     end
     object Panel6: TPanel
       Left = 2
@@ -468,13 +463,14 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
         Left = 3
         Top = 30
         Width = 205
-        Height = 23
+        Height = 20
         Cursor = crHandPoint
         Align = alClient
         Alignment = taCenter
         Layout = tlCenter
         OnClick = lblRootPathClick
-        ExplicitLeft = 0
+        ExplicitWidth = 3
+        ExplicitHeight = 13
       end
       object comboDelphiInstallations: TComboBox
         AlignWithMargins = True
@@ -486,7 +482,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
         Style = csDropDownList
         TabOrder = 0
         OnChange = comboDelphiInstallationsChange
-        ExplicitWidth = 294
       end
     end
     object Panel7: TPanel
@@ -497,8 +492,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitLeft = 302
-      ExplicitWidth = 139
     end
   end
   object GroupBox2: TGroupBox
@@ -510,7 +503,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
     Align = alTop
     Caption = 'Environment Variables'
     TabOrder = 1
-    ExplicitWidth = 761
     object Splitter1: TSplitter
       Left = 373
       Top = 15
@@ -528,7 +520,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitLeft = 362
       object Label2: TLabel
         AlignWithMargins = True
         Left = 3
@@ -541,9 +532,9 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
       end
       object ListViewSystemEnvironmentVariables: TListView
         Left = 0
-        Top = 57
+        Top = 60
         Width = 394
-        Height = 160
+        Height = 157
         Align = alClient
         Columns = <
           item
@@ -561,12 +552,10 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
         TabOrder = 1
         ViewStyle = vsReport
         OnCustomDrawItem = ListViewEnvironmentVariablesCustomDrawItem
-        ExplicitLeft = -3
-        ExplicitTop = 60
       end
       object Panel5: TPanel
         Left = 0
-        Top = 16
+        Top = 19
         Width = 394
         Height = 41
         Align = alTop
@@ -595,7 +584,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
       BevelOuter = bvNone
       Caption = 'Panel2'
       TabOrder = 0
-      ExplicitWidth = 351
       object Label1: TLabel
         AlignWithMargins = True
         Left = 3
@@ -608,9 +596,9 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
       end
       object ListViewEnvironmentVariables: TListView
         Left = 0
-        Top = 57
+        Top = 60
         Width = 365
-        Height = 160
+        Height = 157
         Align = alClient
         Columns = <
           item
@@ -628,18 +616,15 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
         TabOrder = 1
         ViewStyle = vsReport
         OnCustomDrawItem = ListViewEnvironmentVariablesCustomDrawItem
-        ExplicitLeft = -3
-        ExplicitTop = 60
       end
       object Panel4: TPanel
         Left = 0
-        Top = 16
+        Top = 19
         Width = 365
         Height = 41
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitWidth = 351
         object BitBtn5: TBitBtn
           AlignWithMargins = True
           Left = 84
@@ -936,8 +921,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
     Align = alClient
     Caption = 'Library'
     TabOrder = 2
-    ExplicitWidth = 761
-    ExplicitHeight = 298
     object Panel1: TPanel
       Left = 2
       Top = 15
@@ -946,7 +929,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 0
-      ExplicitWidth = 757
       object BitBtn1: TBitBtn
         AlignWithMargins = True
         Left = 645
@@ -1088,7 +1070,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
           FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
           FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
         TabOrder = 5
-        ExplicitLeft = 675
       end
       object BitBtn2: TBitBtn
         AlignWithMargins = True
@@ -1537,7 +1518,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
         Align = alLeft
         Caption = 'Replace'
         TabOrder = 4
-        ExplicitLeft = 554
       end
     end
     object StatusBar: TStatusBar
@@ -1552,8 +1532,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
         item
           Width = 50
         end>
-      ExplicitLeft = -4
-      ExplicitTop = 203
     end
     object ListViewLibrary: TListView
       Left = 2
@@ -1579,10 +1557,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
       ViewStyle = vsReport
       OnCustomDrawItem = ListViewLibraryCustomDrawItem
       OnDblClick = ListViewLibraryDblClick
-      ExplicitLeft = 3
-      ExplicitTop = 59
-      ExplicitWidth = 757
-      ExplicitHeight = 221
     end
   end
   object GroupBox4: TGroupBox
@@ -1594,8 +1568,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
     Align = alBottom
     Caption = 'Tools'
     TabOrder = 3
-    ExplicitLeft = -2
-    ExplicitTop = 79
     object BitBtn17: TBitBtn
       AlignWithMargins = True
       Left = 693
@@ -1606,7 +1578,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
       Align = alRight
       Caption = 'About'
       TabOrder = 5
-      ExplicitLeft = 615
     end
     object BitBtn18: TBitBtn
       AlignWithMargins = True
@@ -1629,7 +1600,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
       Align = alLeft
       Caption = 'Import'
       TabOrder = 1
-      ExplicitLeft = 86
     end
     object BitBtn13: TBitBtn
       AlignWithMargins = True
@@ -1783,7 +1753,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
       Align = alLeft
       Caption = 'Copy path'
       TabOrder = 3
-      ExplicitLeft = 177
     end
     object BitBtn15: TBitBtn
       AlignWithMargins = True
@@ -1795,7 +1764,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
       Align = alLeft
       Caption = 'Copy value'
       TabOrder = 4
-      ExplicitLeft = 177
     end
   end
   object ActionList: TActionList
@@ -1909,7 +1877,7 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
     Left = 77
     Top = 397
     Bitmap = {
-      494C010113001800240020002000FFFFFFFF2100FFFFFFFFFFFFFFFF424D3600
+      494C010113001800300020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000080000000A000000001002000000000000040
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -4553,7 +4521,8 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
       F000000F000000000000000000000000F000000F000000000000000000000000
       F800001F000000000000000000000000FFFFFFFF000000000000000000000000
       FFFFFFFF000000000000000000000000FFFFFFFF000000000000000000000000
-      FFFFFFFF000000000000000000000000}
+      FFFFFFFF00000000000000000000000000000000000000000000000000000000
+      000000000000}
   end
   object MainMenu: TMainMenu
     Images = ImageList

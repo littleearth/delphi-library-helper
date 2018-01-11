@@ -34,7 +34,6 @@ object frmFindReplace: TfrmFindReplace
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitHeight = 98
       object cbIgnoreCase: TCheckBox
         AlignWithMargins = True
         Left = 3
@@ -46,9 +45,6 @@ object frmFindReplace: TfrmFindReplace
         Checked = True
         State = cbChecked
         TabOrder = 0
-        ExplicitLeft = 56
-        ExplicitTop = 21
-        ExplicitWidth = 97
       end
     end
     object Panel4: TPanel
@@ -59,18 +55,15 @@ object frmFindReplace: TfrmFindReplace
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 0
-      ExplicitLeft = 24
-      ExplicitTop = 38
-      ExplicitWidth = 185
-      ExplicitHeight = 41
       object Label1: TLabel
         AlignWithMargins = True
         Left = 3
-        Top = 46
+        Top = 49
         Width = 330
         Height = 13
         Align = alTop
         Caption = 'Replace'
+        ExplicitTop = 46
         ExplicitWidth = 38
       end
       object Label2: TLabel
@@ -86,7 +79,7 @@ object frmFindReplace: TfrmFindReplace
       object editFind: TComboBox
         AlignWithMargins = True
         Left = 3
-        Top = 19
+        Top = 22
         Width = 330
         Height = 21
         Align = alTop
@@ -95,7 +88,7 @@ object frmFindReplace: TfrmFindReplace
       object editReplace: TComboBox
         AlignWithMargins = True
         Left = 3
-        Top = 62
+        Top = 68
         Width = 330
         Height = 21
         Align = alTop
@@ -112,7 +105,6 @@ object frmFindReplace: TfrmFindReplace
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitLeft = -2
     object btnOk: TBitBtn
       AlignWithMargins = True
       Left = 286
@@ -123,9 +115,6 @@ object frmFindReplace: TfrmFindReplace
       Align = alRight
       Caption = 'Replace'
       TabOrder = 0
-      ExplicitLeft = 344
-      ExplicitTop = 8
-      ExplicitHeight = 25
     end
     object btnCancel: TBitBtn
       AlignWithMargins = True
@@ -137,9 +126,6 @@ object frmFindReplace: TfrmFindReplace
       Align = alRight
       Caption = 'Cancel'
       TabOrder = 1
-      ExplicitLeft = 263
-      ExplicitTop = 8
-      ExplicitHeight = 25
     end
   end
   object GroupBoxDestination: TGroupBox
@@ -151,10 +137,6 @@ object frmFindReplace: TfrmFindReplace
     Align = alClient
     Caption = 'Library'
     TabOrder = 1
-    ExplicitLeft = -182
-    ExplicitTop = 48
-    ExplicitWidth = 633
-    ExplicitHeight = 131
     object GridPanel1: TGridPanel
       AlignWithMargins = True
       Left = 5
@@ -231,8 +213,6 @@ object frmFindReplace: TfrmFindReplace
           Value = 25.000000000000000000
         end>
       TabOrder = 0
-      ExplicitWidth = 623
-      ExplicitHeight = 108
       object cbAndroid32: TCheckBox
         AlignWithMargins = True
         Left = 3
@@ -243,7 +223,6 @@ object frmFindReplace: TfrmFindReplace
         Caption = 'Android32'
         PopupMenu = PopupMenuLibrary
         TabOrder = 0
-        ExplicitWidth = 305
       end
       object cbIOS32: TCheckBox
         AlignWithMargins = True
@@ -255,8 +234,6 @@ object frmFindReplace: TfrmFindReplace
         Caption = 'IOS32'
         PopupMenu = PopupMenuLibrary
         TabOrder = 1
-        ExplicitLeft = 314
-        ExplicitWidth = 306
       end
       object cbIOS64: TCheckBox
         AlignWithMargins = True
@@ -268,7 +245,6 @@ object frmFindReplace: TfrmFindReplace
         Caption = 'IOS64'
         PopupMenu = PopupMenuLibrary
         TabOrder = 2
-        ExplicitWidth = 305
       end
       object cbIOSSimulator: TCheckBox
         AlignWithMargins = True
@@ -280,8 +256,6 @@ object frmFindReplace: TfrmFindReplace
         Caption = 'IOSSimulator'
         PopupMenu = PopupMenuLibrary
         TabOrder = 3
-        ExplicitLeft = 314
-        ExplicitWidth = 306
       end
       object cbOSX: TCheckBox
         AlignWithMargins = True
@@ -293,7 +267,6 @@ object frmFindReplace: TfrmFindReplace
         Caption = 'OSX'
         PopupMenu = PopupMenuLibrary
         TabOrder = 4
-        ExplicitWidth = 305
       end
       object cbWin32: TCheckBox
         AlignWithMargins = True
@@ -305,8 +278,6 @@ object frmFindReplace: TfrmFindReplace
         Caption = 'Win32'
         PopupMenu = PopupMenuLibrary
         TabOrder = 5
-        ExplicitLeft = 314
-        ExplicitWidth = 306
       end
       object cbWin64: TCheckBox
         AlignWithMargins = True
@@ -318,7 +289,6 @@ object frmFindReplace: TfrmFindReplace
         Caption = 'Win64'
         PopupMenu = PopupMenuLibrary
         TabOrder = 6
-        ExplicitWidth = 305
       end
       object cbLinux64: TCheckBox
         AlignWithMargins = True
@@ -330,8 +300,6 @@ object frmFindReplace: TfrmFindReplace
         Caption = 'Linux64'
         PopupMenu = PopupMenuLibrary
         TabOrder = 7
-        ExplicitLeft = 314
-        ExplicitWidth = 306
       end
     end
   end
@@ -355,7 +323,7 @@ object frmFindReplace: TfrmFindReplace
     Left = 96
     Top = 111
     Bitmap = {
-      494C010102000900180010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C0101020009001C0010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

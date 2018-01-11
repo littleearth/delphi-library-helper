@@ -59,7 +59,7 @@ implementation
 {$R *.dfm}
 
 uses
-  System.StrUtils;
+  System.StrUtils, frmProgressU;
 
 procedure TfrmSearch.ActionCloseExecute(Sender: TObject);
 begin
@@ -83,7 +83,8 @@ begin
   Find(editFind.Text, cbIgnoreCase.Checked);
   if ListViewSearch.Items.Count = 0 then
   begin
-    MessageDlg(Format('"%s" was not found.', [editFind.Text]), mtInformation, [mbOK], 0);
+    MessageDlg(Format('"%s" was not found.', [editFind.Text]), mtInformation,
+      [mbOK], 0);
   end;
 end;
 
@@ -165,6 +166,7 @@ var
   end;
 
 begin
+  ShowProgress('Searching...');
   LLibrary := TStringList.Create;
   ListViewSearch.Items.Clear;
   ListViewSearch.Items.BeginUpdate;
@@ -212,6 +214,7 @@ begin
   finally
     ListViewSearch.Items.EndUpdate;
     FreeAndNil(LLibrary);
+    HideProgress;
   end;
 
 end;

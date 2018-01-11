@@ -146,7 +146,8 @@ type
     procedure LoadSystemEnvironmentVariables;
     function ValidatePath(APath: string): Boolean;
     procedure ProcessParameters;
-    procedure ApplyTemplate(AFileName: TFileName);
+    procedure ApplyTemplate(AFileName: TFileName;
+      AApplyToAllInstallations: Boolean);
     function GetApplicationParameters(AParameter: string;
       var AValue: string): Boolean;
   public
@@ -162,7 +163,7 @@ implementation
 
 uses
   frmAddLibraryPathU, frmAddEnvironmentVariableU, frmAboutU, frmFindReplaceU,
-  frmSearchU;
+  frmSearchU, frmProgressU;
 
 procedure TfrmDelphiLibraryHelper.ActionAboutExecute(Sender: TObject);
 begin
@@ -212,6 +213,7 @@ end;
 procedure TfrmDelphiLibraryHelper.ActionApplyTemplateExecute(Sender: TObject);
 var
   LOpenDialog: TOpenDialog;
+  LApplyToAllInstallations: Boolean;
 begin
   LOpenDialog := TOpenDialog.Create(Self);
   try
@@ -222,7 +224,18 @@ begin
     LOpenDialog.InitialDir := ExtractFilePath(ParamStr(0));
     if LOpenDialog.Execute then
     begin
-      ApplyTemplate(LOpenDialog.FileName);
+      LApplyToAllInstallations := False;
+      if FLibraryHelper.InstalledCount > 1 then
+      begin
+        MessageDlg(Format('Select from the following options on how to apply template "%s".' + #13#10 + #13#10
+          + '[Yes to All] - Apply to all "%d" installations' + #13#10 +
+          '[Yes] - Apply to "%s" selected installation' + #13#10 +
+          '[No] - Do not apply template to any installation',
+          [ExtractFileName(LOpenDialog.FileName), FLibraryHelper.InstalledCount,
+          FDelphiInstallation.ProductName]), mtConfirmation,
+          [mbYesToAll, mbYes, mbNo], 0);
+      end;
+      ApplyTemplate(LOpenDialog.FileName, LApplyToAllInstallations);
     end;
   finally
     FreeAndNil(LOpenDialog);
@@ -384,14 +397,19 @@ procedure TfrmDelphiLibraryHelper.ActionLoadExecute(Sender: TObject);
 begin
   if comboDelphiInstallations.ItemIndex <> -1 then
   begin
-    FDelphiInstallation := FLibraryHelper.Installation
-      [comboDelphiInstallations.Text];
-    FDelphiInstallation.Load;
-    lblRootPath.Caption := FDelphiInstallation.RootPath;
-    LoadSystemEnvironmentVariables;
-    LoadEnvironmentVariables;
-    comboLibrariesChange(nil);
-    FModified := False;
+    ShowProgress('Loading...');
+    try
+      FDelphiInstallation := FLibraryHelper.Installation
+        [comboDelphiInstallations.Text];
+      FDelphiInstallation.Load;
+      lblRootPath.Caption := FDelphiInstallation.RootPath;
+      LoadSystemEnvironmentVariables;
+      LoadEnvironmentVariables;
+      comboLibrariesChange(nil);
+      FModified := False;
+    finally
+      HideProgress;
+    end;
   end;
 end;
 
@@ -429,8 +447,13 @@ begin
   begin
     if Assigned(FDelphiInstallation) then
     begin
-      FDelphiInstallation.Save;
-      FModified := False;
+      ShowProgress('Saving...');
+      try
+        FDelphiInstallation.Save;
+        FModified := False;
+      finally
+        HideProgress;
+      end;
     end;
   end;
 end;
@@ -459,11 +482,35 @@ begin
     SW_SHOWNORMAL);
 end;
 
-procedure TfrmDelphiLibraryHelper.ApplyTemplate(AFileName: TFileName);
+procedure TfrmDelphiLibraryHelper.ApplyTemplate(AFileName: TFileName;
+  AApplyToAllInstallations: Boolean);
+var
+  LDelphiInstallation: TDelphiInstallation;
+  LIdx, LTotal: integer;
 begin
-  FDelphiInstallation.Apply(AFileName);
-  comboLibrariesChange(nil);
-  FModified := True;
+  ShowProgress('Applying Template...');
+  try
+    if AApplyToAllInstallations then
+    begin
+      LTotal := FLibraryHelper.Count;
+      for LIdx := 0 to Pred(LTotal) do
+      begin
+        LDelphiInstallation := FLibraryHelper.Installations[LIdx];
+        UpdateProgress(LIdx + 1, LTotal + 1, 'Applying template to ' +
+          LDelphiInstallation.ProductName);
+        LDelphiInstallation.Apply(AFileName);
+        LDelphiInstallation.Save;
+      end;
+    end
+    else
+    begin
+      FDelphiInstallation.Apply(AFileName);
+    end;
+    comboLibrariesChange(nil);
+    FModified := not AApplyToAllInstallations;
+  finally
+    HideProgress;
+  end;
 end;
 
 procedure TfrmDelphiLibraryHelper.comboDelphiInstallationsChange
@@ -578,7 +625,7 @@ begin
   comboDelphiInstallations.Items.Clear;
   try
     FLibraryHelper.Load;
-    for LIdx := 0 to Pred(FLibraryHelper.InstallationCount) do
+    for LIdx := 0 to Pred(FLibraryHelper.Count) do
     begin
       if FLibraryHelper.Installations[LIdx].Installed then
       begin
@@ -685,14 +732,11 @@ begin
   begin
     if FileExists(LParam) then
     begin
-      ApplyTemplate(LParam);
-
+      ApplyTemplate(LParam, True);
       if GetApplicationParameters('/CLOSE', LParam) then
       begin
-        ActionSave.Execute;
         Application.Terminate;
       end;
-
     end;
   end;
 
@@ -742,6 +786,8 @@ begin
         FDelphiInstallation.LibraryWin32 := LLibrary.Text;
       dlWin64:
         FDelphiInstallation.LibraryWin64 := LLibrary.Text;
+      dlLinux64:
+        FDelphiInstallation.LibraryLinux64 := LLibrary.Text;
     end;
     LoadLibrary;
   finally

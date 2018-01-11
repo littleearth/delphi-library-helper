@@ -16,7 +16,8 @@ uses
   frmAboutU in 'frmAboutU.pas' {frmAbout},
   FileVersionInformationU in 'FileVersionInformationU.pas',
   frmFindReplaceU in 'frmFindReplaceU.pas' {frmFindReplace},
-  frmSearchU in 'frmSearchU.pas' {frmSearch};
+  frmSearchU in 'frmSearchU.pas' {frmSearch},
+  frmProgressU in 'frmProgressU.pas' {frmProgress};
 
 {$R *.res}
 

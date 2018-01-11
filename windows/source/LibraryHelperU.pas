@@ -130,6 +130,7 @@ type
     function GetShellFolderPath(AFolder: integer): string;
     function GetDocumentFolder: string;
     function GetPublicDocumentFolder: string;
+    procedure NotifyEnvironmentChanges;
   public
     constructor Create(ARegistryKey: string);
     destructor Destroy; override;
@@ -189,7 +190,8 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure Load;
-    function InstallationCount: integer;
+    function Count: integer;
+    function InstalledCount: integer;
     function IsDelphiRunning: boolean;
     function GetLibraryName(ADelphiLibrary: TDelphiLibrary): string;
     function GetLibraryPlatformName(ADelphiLibrary: TDelphiLibrary): string;
@@ -227,7 +229,7 @@ var
 begin
   Result := nil;
   LIdx := 0;
-  while (LIdx < InstallationCount) and (Result = nil) do
+  while (LIdx < Count) and (Result = nil) do
   begin
     if SameText(FDelphiInstallationList.Items[LIdx].ProductName, AProductName)
     then
@@ -337,7 +339,7 @@ begin
   end;
 end;
 
-function TLibraryHelper.InstallationCount: integer;
+function TLibraryHelper.Count: integer;
 begin
   Result := FDelphiInstallationList.Count;
 end;
@@ -363,6 +365,18 @@ begin
     ContinueLoop := Process32Next(FSnapshotHandle, FProcessEntry32);
   end;
   CloseHandle(FSnapshotHandle);
+end;
+
+function TLibraryHelper.InstalledCount: integer;
+var
+  LIdx: integer;
+begin
+  Result := 0;
+  for LIdx := 0 to PreD(Count) do
+  begin
+    if Installations[LIdx].Installed then
+      Inc(Result);
+  end;
 end;
 
 function TLibraryHelper.IsDelphiRunning: boolean;
@@ -452,7 +466,7 @@ var
 begin
   LLibraryPathTemplate := TLibraryPathTemplate.Create;
   try
-    LLibraryPathTemplate.Load(AFileName);
+    LLibraryPathTemplate.Load(AFileName, GetProductVersion);
     Apply(LLibraryPathTemplate);
   finally
     FreeAndNil(LLibraryPathTemplate);
@@ -804,6 +818,17 @@ begin
   finally
     FreeAndNil(LRegistry);
   end;
+end;
+
+procedure TDelphiInstallation.NotifyEnvironmentChanges;
+begin
+  { Sending a WM_SETTINGCHANGE message to all top level windows. Otherwise the new environment variables
+    will only be visible after logoff/logon. }
+  // {$IFDEF DEBUG}
+  // Exit;
+  // {$ENDIF}
+  SendMessageTimeout(HWND_BROADCAST, WM_SETTINGCHANGE, 0,
+    NativeInt(PChar('Environment')), SMTO_ABORTIFHUNG, 5000, nil);
 end;
 
 procedure TDelphiInstallation.LibraryAsStrings(AStrings: TStrings;
@@ -1203,6 +1228,7 @@ begin
   SaveEnvironmentVariables;
   SaveLibraries;
   ForceEnvOptionsUpdate;
+  NotifyEnvironmentChanges;
 end;
 
 procedure TDelphiInstallation.SaveEnvironmentVariables;

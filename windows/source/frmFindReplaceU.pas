@@ -57,6 +57,9 @@ implementation
 
 {$R *.dfm}
 
+uses
+  frmProgressU;
+
 procedure TfrmFindReplace.ActionCancelExecute(Sender: TObject);
 begin
   Self.ModalResult := mrCancel;
@@ -107,47 +110,57 @@ procedure TfrmFindReplace.FindReplace(AFind, AReplace: string;
 var
   LFlags: TReplaceFlags;
 begin
-  LFlags := [];
-  if AIgnoreCase then
-  begin
-    LFlags := LFlags + [rfIgnoreCase];
+  ShowProgress('Please wait...');
+  try
+    LFlags := [];
+    if AIgnoreCase then
+    begin
+      LFlags := LFlags + [rfIgnoreCase];
+    end;
+    LFlags := LFlags + [rfReplaceAll];
+
+    if cbAndroid32.Checked then
+      FDelphiInstallation.LibraryAndroid32 :=
+        StringReplace(FDelphiInstallation.LibraryAndroid32, AFind,
+        AReplace, LFlags);
+
+    if cbIOS32.Checked then
+      FDelphiInstallation.LibraryIOS32 :=
+        StringReplace(FDelphiInstallation.LibraryIOS32, AFind,
+        AReplace, LFlags);
+
+    if cbIOS64.Checked then
+      FDelphiInstallation.LibraryIOS64 :=
+        StringReplace(FDelphiInstallation.LibraryIOS64, AFind,
+        AReplace, LFlags);
+
+    if cbIOSSimulator.Checked then
+      FDelphiInstallation.LibraryIOSSimulator :=
+        StringReplace(FDelphiInstallation.LibraryIOSSimulator, AFind,
+        AReplace, LFlags);
+
+    if cbOSX.Checked then
+      FDelphiInstallation.LibraryOSX32 :=
+        StringReplace(FDelphiInstallation.LibraryOSX32, AFind,
+        AReplace, LFlags);
+
+    if cbWin32.Checked then
+      FDelphiInstallation.LibraryWin32 :=
+        StringReplace(FDelphiInstallation.LibraryWin32, AFind,
+        AReplace, LFlags);
+
+    if cbWin64.Checked then
+      FDelphiInstallation.LibraryWin64 :=
+        StringReplace(FDelphiInstallation.LibraryWin64, AFind,
+        AReplace, LFlags);
+
+    if cbLinux64.Checked then
+      FDelphiInstallation.LibraryLinux64 :=
+        StringReplace(FDelphiInstallation.LibraryLinux64, AFind,
+        AReplace, LFlags);
+  finally
+    HideProgress;
   end;
-  LFlags := LFlags + [rfReplaceAll];
-
-  if cbAndroid32.Checked then
-    FDelphiInstallation.LibraryAndroid32 :=
-      StringReplace(FDelphiInstallation.LibraryAndroid32, AFind,
-      AReplace, LFlags);
-
-  if cbIOS32.Checked then
-    FDelphiInstallation.LibraryIOS32 :=
-      StringReplace(FDelphiInstallation.LibraryIOS32, AFind, AReplace, LFlags);
-
-  if cbIOS64.Checked then
-    FDelphiInstallation.LibraryIOS64 :=
-      StringReplace(FDelphiInstallation.LibraryIOS64, AFind, AReplace, LFlags);
-
-  if cbIOSSimulator.Checked then
-    FDelphiInstallation.LibraryIOSSimulator :=
-      StringReplace(FDelphiInstallation.LibraryIOSSimulator, AFind,
-      AReplace, LFlags);
-
-  if cbOSX.Checked then
-    FDelphiInstallation.LibraryOSX32 :=
-      StringReplace(FDelphiInstallation.LibraryOSX32, AFind, AReplace, LFlags);
-
-  if cbWin32.Checked then
-    FDelphiInstallation.LibraryWin32 :=
-      StringReplace(FDelphiInstallation.LibraryWin32, AFind, AReplace, LFlags);
-
-  if cbWin64.Checked then
-    FDelphiInstallation.LibraryWin64 :=
-      StringReplace(FDelphiInstallation.LibraryWin64, AFind, AReplace, LFlags);
-
-  if cbLinux64.Checked then
-    FDelphiInstallation.LibraryLinux64 :=
-      StringReplace(FDelphiInstallation.LibraryLinux64, AFind,
-      AReplace, LFlags);
 end;
 
 procedure TfrmFindReplace.FormShow(Sender: TObject);

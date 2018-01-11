@@ -21,9 +21,6 @@ object frmAddEnvironmentVariable: TfrmAddEnvironmentVariable
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitLeft = -4
-    ExplicitTop = 191
-    ExplicitWidth = 639
     object BitBtn1: TBitBtn
       AlignWithMargins = True
       Left = 224
@@ -34,7 +31,6 @@ object frmAddEnvironmentVariable: TfrmAddEnvironmentVariable
       Align = alRight
       Caption = 'Ok'
       TabOrder = 0
-      ExplicitLeft = 480
     end
     object BitBtn2: TBitBtn
       AlignWithMargins = True
@@ -46,7 +42,6 @@ object frmAddEnvironmentVariable: TfrmAddEnvironmentVariable
       Align = alRight
       Caption = 'Cancel'
       TabOrder = 1
-      ExplicitLeft = 561
     end
   end
   object Panel1: TPanel
@@ -58,27 +53,25 @@ object frmAddEnvironmentVariable: TfrmAddEnvironmentVariable
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitLeft = 146
-    ExplicitTop = 54
-    ExplicitWidth = 185
-    ExplicitHeight = 41
     object Label1: TLabel
       AlignWithMargins = True
       Left = 3
       Top = 3
-      Width = 27
+      Width = 377
       Height = 13
       Align = alTop
       Caption = 'Name'
+      ExplicitWidth = 27
     end
     object Label2: TLabel
       AlignWithMargins = True
       Left = 3
       Top = 46
-      Width = 26
+      Width = 377
       Height = 13
       Align = alTop
       Caption = 'Value'
+      ExplicitWidth = 26
     end
     object editName: TEdit
       AlignWithMargins = True
@@ -88,9 +81,6 @@ object frmAddEnvironmentVariable: TfrmAddEnvironmentVariable
       Height = 21
       Align = alTop
       TabOrder = 0
-      ExplicitLeft = 48
-      ExplicitTop = 36
-      ExplicitWidth = 121
     end
     object editValue: TJvDirectoryEdit
       AlignWithMargins = True
@@ -99,11 +89,8 @@ object frmAddEnvironmentVariable: TfrmAddEnvironmentVariable
       Width = 377
       Height = 21
       Align = alTop
-      DialogKind = dkWin32
       TabOrder = 1
       Text = ''
-      ExplicitTop = 79
-      ExplicitWidth = 633
     end
   end
   object ActionList: TActionList
@@ -126,7 +113,7 @@ object frmAddEnvironmentVariable: TfrmAddEnvironmentVariable
     Left = 48
     Top = 121
     Bitmap = {
-      494C010106000900080010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C0101060009000C0010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

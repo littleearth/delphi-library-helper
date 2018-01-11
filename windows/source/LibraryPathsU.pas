@@ -74,11 +74,13 @@ type
     FLinux64: TLibraryPaths;
   protected
     procedure LoadSection(AFileName: TFileName; ASectionName: string;
-      ALibraryPathList: TLibraryPaths);
+      ALibraryPathList: TLibraryPaths; AAppend: boolean = false);
+    function ValidateProductVersion(AFileName: TFileName;
+      AProductVersion: integer): boolean;
   public
     constructor Create; reintroduce;
     destructor Destroy; override;
-    procedure Load(AFileName: TFileName);
+    procedure Load(AFileName: TFileName; AProductVersion: integer);
     property Common: TLibraryPaths read FCommon;
     property CommonFMX: TLibraryPaths read FCommonFMX;
     property CommonVCL: TLibraryPaths read FCommonVCL;
@@ -135,29 +137,64 @@ begin
 
 end;
 
-procedure TLibraryPathTemplate.Load(AFileName: TFileName);
+procedure TLibraryPathTemplate.Load(AFileName: TFileName;
+  AProductVersion: integer);
 begin
-  LoadSection(AFileName, 'common', FCommon);
-  LoadSection(AFileName, 'common-fmx', FCommonFMX);
-  LoadSection(AFileName, 'common-vcl', FCommonVCL);
-  LoadSection(AFileName, 'win32', FWin32);
-  LoadSection(AFileName, 'win64', FWin64);
-  LoadSection(AFileName, 'osx32', FOSX32);
-  LoadSection(AFileName, 'ios32', FIOS32);
-  LoadSection(AFileName, 'ios64', FIOS64);
-  LoadSection(AFileName, 'iossimulator', FIOSSimulator);
-  LoadSection(AFileName, 'android32', FAndroid32);
-  LoadSection(AFileName, 'linux64', FLinux64);
+
+  if ValidateProductVersion(AFileName, AProductVersion) then
+  begin
+
+    LoadSection(AFileName, 'common', FCommon);
+    LoadSection(AFileName, 'common-' + IntToStr(AProductVersion),
+      FCommon, True);
+
+    LoadSection(AFileName, 'common-fmx', FCommonFMX);
+    LoadSection(AFileName, 'common-fmx-' + IntToStr(AProductVersion),
+      FCommonFMX, True);
+
+    LoadSection(AFileName, 'common-vcl', FCommonVCL);
+    LoadSection(AFileName, 'common-vcl-' + IntToStr(AProductVersion),
+      FCommonVCL, True);
+
+    LoadSection(AFileName, 'win32', FWin32);
+    LoadSection(AFileName, 'win32-' + IntToStr(AProductVersion), FWin32, True);
+
+    LoadSection(AFileName, 'win64', FWin64);
+    LoadSection(AFileName, 'win64-' + IntToStr(AProductVersion), FWin64, True);
+
+    LoadSection(AFileName, 'osx32', FOSX32);
+    LoadSection(AFileName, 'osx32-' + IntToStr(AProductVersion), FOSX32, True);
+
+    LoadSection(AFileName, 'ios32', FIOS32);
+    LoadSection(AFileName, 'ios32-' + IntToStr(AProductVersion), FIOS32, True);
+
+    LoadSection(AFileName, 'ios64', FIOS64);
+    LoadSection(AFileName, 'ios64-' + IntToStr(AProductVersion), FIOS64, True);
+
+    LoadSection(AFileName, 'iossimulator', FIOSSimulator);
+    LoadSection(AFileName, 'iossimulator-' + IntToStr(AProductVersion),
+      FIOSSimulator, True);
+
+    LoadSection(AFileName, 'android32', FAndroid32);
+    LoadSection(AFileName, 'android32-' + IntToStr(AProductVersion),
+      FAndroid32, True);
+
+    LoadSection(AFileName, 'linux64', FLinux64);
+    LoadSection(AFileName, 'linux64-' + IntToStr(AProductVersion),
+      FLinux64, True);
+  end;
+
 end;
 
 procedure TLibraryPathTemplate.LoadSection(AFileName: TFileName;
-  ASectionName: string; ALibraryPathList: TLibraryPaths);
+  ASectionName: string; ALibraryPathList: TLibraryPaths; AAppend: boolean);
 var
   LINIFile: TIniFile;
   LSectionList: TStringList;
   LSectionIdx: integer;
 begin
-  ALibraryPathList.Clear;
+  if not AAppend then
+    ALibraryPathList.Clear;
   if FileExists(AFileName) then
   begin
     LINIFile := TIniFile.Create(AFileName);
@@ -167,10 +204,29 @@ begin
       for LSectionIdx := 0 to Pred(LSectionList.Count) do
       begin
         ALibraryPathList.Add(LSectionList[LSectionIdx],
-          LINIFile.ReadBool(ASectionName, LSectionList[LSectionIdx], True));
+          SameText('True', LINIFile.ReadString(ASectionName,
+          LSectionList[LSectionIdx], 'True')));
       end;
     finally
       FreeAndNil(LSectionList);
+      FreeAndNil(LINIFile);
+    end;
+  end;
+end;
+
+function TLibraryPathTemplate.ValidateProductVersion(AFileName: TFileName;
+  AProductVersion: integer): boolean;
+var
+  LINIFile: TIniFile;
+begin
+  Result := false;
+  if FileExists(AFileName) then
+  begin
+    LINIFile := TIniFile.Create(AFileName);
+    try
+      Result := SameText('True', LINIFile.ReadString('profile',
+        IntToStr(AProductVersion), 'True'));
+    finally
       FreeAndNil(LINIFile);
     end;
   end;

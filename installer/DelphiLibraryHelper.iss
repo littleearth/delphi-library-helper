@@ -61,6 +61,8 @@ Name: custom; Description: Custom Installation; Flags: iscustom
 Name: code; Description: Source Code; Types: custom
 Name: program; Description: Program Files; Types: typical custom
 
+[Tasks]
+Name: "delphitools"; Description: "Add to delphi tools menu"; Components: program
 
 [Files]
 Source: "..\windows\bin\win32\release\{#ConstAppExeName}"; DestDir: "{app}"; Flags: promptifolder replacesameversion; Components: program
@@ -84,3 +86,10 @@ Name: {group}\{#ConstAppName} Source Code; Filename: {app}\Source; Flags: folder
 
 [Run]
 Filename: "{app}\{#ConstAppExeName}"; WorkingDir: "{app}"; Flags: nowait postinstall runasoriginaluser; Description: "Launch {#ConstAppName}"
+
+[Registry]
+; Add Delphi Library Helper
+Root: "HKCU"; Subkey: "Software\Embarcadero\BDS\19.0\Transfer\Delphi Library Helper"; ValueType: string; ValueName: "Params"; Tasks: delphitools
+Root: "HKCU"; Subkey: "Software\Embarcadero\BDS\19.0\Transfer\Delphi Library Helper"; ValueType: string; ValueName: "Path"; ValueData: "{app}\DelphiLibraryHelper.exe"; Tasks: delphitools
+Root: "HKCU"; Subkey: "Software\Embarcadero\BDS\19.0\Transfer\Delphi Library Helper"; ValueType: string; ValueName: "Title"; ValueData: "Delphi Library Helper"; Tasks: delphitools
+Root: "HKCU"; Subkey: "Software\Embarcadero\BDS\19.0\Transfer\Delphi Library Helper"; ValueType: string; ValueName: "WorkingDir"; ValueData: "{app}\DelphiLibraryHelper"; Tasks: delphitools
