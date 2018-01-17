@@ -227,9 +227,10 @@ begin
       LApplyToAllInstallations := False;
       if FLibraryHelper.InstalledCount > 1 then
       begin
-        MessageDlg(Format('Select from the following options on how to apply template "%s".' + #13#10 + #13#10
-          + '[Yes to All] - Apply to all "%d" installations' + #13#10 +
-          '[Yes] - Apply to "%s" selected installation' + #13#10 +
+        MessageDlg
+          (Format('Select from the following options on how to apply template "%s".'
+          + #13#10 + #13#10 + '[Yes to All] - Apply to all "%d" installations' +
+          #13#10 + '[Yes] - Apply to "%s" selected installation' + #13#10 +
           '[No] - Do not apply template to any installation',
           [ExtractFileName(LOpenDialog.FileName), FLibraryHelper.InstalledCount,
           FDelphiInstallation.ProductName]), mtConfirmation,
@@ -496,10 +497,13 @@ begin
       for LIdx := 0 to Pred(LTotal) do
       begin
         LDelphiInstallation := FLibraryHelper.Installations[LIdx];
-        UpdateProgress(LIdx + 1, LTotal + 1, 'Applying template to ' +
-          LDelphiInstallation.ProductName);
-        LDelphiInstallation.Apply(AFileName);
-        LDelphiInstallation.Save;
+        if LDelphiInstallation.Installed then
+        begin
+          UpdateProgress(LIdx + 1, LTotal + 1, 'Applying template to ' +
+            LDelphiInstallation.ProductName);
+          LDelphiInstallation.Apply(AFileName);
+          LDelphiInstallation.Save;
+        end;
       end;
     end
     else
@@ -735,6 +739,11 @@ begin
       ApplyTemplate(LParam, True);
       if GetApplicationParameters('/CLOSE', LParam) then
       begin
+        ShowProgress('Closing...');
+        Application.ProcessMessages;
+        Sleep(2000);
+        Application.ProcessMessages;
+        HideProgress;
         Application.Terminate;
       end;
     end;

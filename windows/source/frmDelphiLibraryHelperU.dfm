@@ -463,7 +463,7 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
         Left = 3
         Top = 30
         Width = 205
-        Height = 20
+        Height = 23
         Cursor = crHandPoint
         Align = alClient
         Alignment = taCenter
@@ -532,9 +532,9 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
       end
       object ListViewSystemEnvironmentVariables: TListView
         Left = 0
-        Top = 60
+        Top = 57
         Width = 394
-        Height = 157
+        Height = 160
         Align = alClient
         Columns = <
           item
@@ -555,7 +555,7 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
       end
       object Panel5: TPanel
         Left = 0
-        Top = 19
+        Top = 16
         Width = 394
         Height = 41
         Align = alTop
@@ -596,9 +596,9 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
       end
       object ListViewEnvironmentVariables: TListView
         Left = 0
-        Top = 60
+        Top = 57
         Width = 365
-        Height = 157
+        Height = 160
         Align = alClient
         Columns = <
           item
@@ -619,7 +619,7 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
       end
       object Panel4: TPanel
         Left = 0
-        Top = 19
+        Top = 16
         Width = 365
         Height = 41
         Align = alTop
@@ -1877,7 +1877,7 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
     Left = 77
     Top = 397
     Bitmap = {
-      494C010113001800300020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010113001800380020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000080000000A000000001002000000000000040
       0100000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

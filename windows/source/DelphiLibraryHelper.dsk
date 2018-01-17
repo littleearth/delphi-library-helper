@@ -12,24 +12,42 @@ File_9=TSourceModule,'C:\Development\ABit Consulting\PJMS\windows\client\source\
 File_10=TSourceModule,'C:\Development\ABit Consulting\PJMS\windows\client\source\base\accounts\purchase orders\frmPurchaseOrderReportsU.pas',0,1,225,3,196,0,0,,
 
 [Modules]
-Module0=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\LibraryPathsU.pas
-Module1=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\LibraryHelperU.pas
-Module2=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmDelphiLibraryHelperU.pas
-Module3=c:\program files (x86)\embarcadero\studio\19.0\source\rtl\common\System.IniFiles.pas
-Module4=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmAddEnvironmentVariableU.pas
-Module5=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmFindReplaceU.pas
-Module6=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmSearchU.pas
-Module7=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmProgressU.pas
-Module8=D:\Development\Components\nuke-objects\source\vcl\base\VCL.NukeWindowsU.pas
-Module9=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\DelphiLibraryHelper.dproj
-Module10=c:\program files (x86)\embarcadero\studio\19.0\source\rtl\common\System.Win.Registry.pas
-Module11=c:\program files (x86)\embarcadero\studio\19.0\SOURCE\RTL\SYS\System.SysUtils.pas
-Module12=c:\program files (x86)\embarcadero\studio\19.0\SOURCE\VCL\Vcl.ComCtrls.pas
-Module13=default.htm
-Module14=documentation.htm
-Module15=default.htm#
-Count=16
+Module0=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmDelphiLibraryHelperU.pas
+Module1=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmAddLibraryPathU.pas
+Module2=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\FileVersionInformationU.pas
+Module3=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmAboutU.pas
+Module4=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmSearchU.pas
+Module5=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\LibraryPathsU.pas
+Module6=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\LibraryHelperU.pas
+Module7=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmFindReplaceU.pas
+Module8=default.htm#
+Module9=default.htm
+Module10=documentation.htm
+Module11=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\DelphiLibraryHelper.dproj
+Module12=c:\program files (x86)\embarcadero\studio\19.0\source\rtl\common\System.IniFiles.pas
+Module13=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmAddEnvironmentVariableU.pas
+Module14=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmProgressU.pas
+Module15=D:\Development\Components\nuke-objects\source\vcl\base\VCL.NukeWindowsU.pas
+Module16=c:\program files (x86)\embarcadero\studio\19.0\source\rtl\common\System.Win.Registry.pas
+Module17=c:\program files (x86)\embarcadero\studio\19.0\SOURCE\RTL\SYS\System.SysUtils.pas
+Module18=c:\program files (x86)\embarcadero\studio\19.0\SOURCE\VCL\Vcl.ComCtrls.pas
+Count=19
 EditWindowCount=1
+
+[D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmDelphiLibraryHelperU.pas]
+ModuleType=TSourceModule
+
+[D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmAddLibraryPathU.pas]
+ModuleType=TSourceModule
+
+[D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\FileVersionInformationU.pas]
+ModuleType=TSourceModule
+
+[D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmAboutU.pas]
+ModuleType=TSourceModule
+
+[D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmSearchU.pas]
+ModuleType=TSourceModule
 
 [D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\LibraryPathsU.pas]
 ModuleType=TSourceModule
@@ -37,8 +55,20 @@ ModuleType=TSourceModule
 [D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\LibraryHelperU.pas]
 ModuleType=TSourceModule
 
-[D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmDelphiLibraryHelperU.pas]
+[D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmFindReplaceU.pas]
 ModuleType=TSourceModule
+
+[default.htm#]
+ModuleType=TURLModule
+
+[default.htm]
+ModuleType=TURLModule
+
+[documentation.htm]
+ModuleType=TURLModule
+
+[D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\DelphiLibraryHelper.dproj]
+ModuleType=TBaseProject
 
 [c:\program files (x86)\embarcadero\studio\19.0\source\rtl\common\System.IniFiles.pas]
 ModuleType=TSourceModule
@@ -46,20 +76,11 @@ ModuleType=TSourceModule
 [D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmAddEnvironmentVariableU.pas]
 ModuleType=TSourceModule
 
-[D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmFindReplaceU.pas]
-ModuleType=TSourceModule
-
-[D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmSearchU.pas]
-ModuleType=TSourceModule
-
 [D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmProgressU.pas]
 ModuleType=TSourceModule
 
 [D:\Development\Components\nuke-objects\source\vcl\base\VCL.NukeWindowsU.pas]
 ModuleType=TSourceModule
-
-[D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\DelphiLibraryHelper.dproj]
-ModuleType=TBaseProject
 
 [c:\program files (x86)\embarcadero\studio\19.0\source\rtl\common\System.Win.Registry.pas]
 ModuleType=TSourceModule
@@ -70,18 +91,9 @@ ModuleType=TSourceModule
 [c:\program files (x86)\embarcadero\studio\19.0\SOURCE\VCL\Vcl.ComCtrls.pas]
 ModuleType=TSourceModule
 
-[default.htm]
-ModuleType=TURLModule
-
-[documentation.htm]
-ModuleType=TURLModule
-
-[default.htm#]
-ModuleType=TURLModule
-
 [EditWindow0]
-ViewCount=16
-CurrentEditView=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\LibraryPathsU.pas
+ViewCount=19
+CurrentEditView=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmDelphiLibraryHelperU.pas
 View0=0
 View1=1
 View2=2
@@ -98,6 +110,9 @@ View12=12
 View13=13
 View14=14
 View15=15
+View16=16
+View17=17
+View18=18
 PercentageSizes=1
 Create=1
 Visible=1
@@ -117,15 +132,15 @@ TopPanelSize=0
 LeftPanelSize=1896
 LeftPanelClients=PropertyInspector,DockSite3
 LeftPanelData=00000800010100000000131000000000000001680700000000000001000000005C0E000009000000446F636B53697465330100000000931C00001100000050726F7065727479496E73706563746F72FFFFFFFF
-RightPanelSize=2161
+RightPanelSize=2000
 RightPanelClients=DockSite2,DockSite4
-RightPanelData=00000800010100000000131000000000000001710800000000000001000000004412000009000000446F636B53697465320100000000931C000009000000446F636B5369746534FFFFFFFF
+RightPanelData=00000800010100000000131000000000000001D00700000000000001000000004412000009000000446F636B53697465320100000000931C000009000000446F636B5369746534FFFFFFFF
 BottomPanelSize=1519
 BottomPanelClients=DockSite1,MessageView
 BottomPanelData=0000080001020100000009000000446F636B5369746531974500000000000002EF050000000000000100000000974500000F0000004D65737361676556696577466F726DFFFFFFFF
 BottomMiddlePanelSize=0
 BottomMiddlePanelClients=DockSite0,GraphDrawingModel
-BottomMiddelPanelData=0000080001020200000009000000446F636B536974653010000000477261706844726177696E6756696577FB28000000000000022606000000000000FFFFFFFF
+BottomMiddelPanelData=0000080001020200000009000000446F636B536974653010000000477261706844726177696E67566965779F1D00000000000002F206000000000000FFFFFFFF
 
 [View0]
 CustomEditViewType=TWelcomePageView
@@ -142,9 +157,9 @@ WelcomePageURL=bds:/default.htm#
 [View3]
 CustomEditViewType=TEditView
 Module=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\LibraryPathsU.pas
-CursorX=88
-CursorY=212
-TopLine=201
+CursorX=3
+CursorY=144
+TopLine=102
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -164,9 +179,9 @@ EditViewName=c:\program files (x86)\embarcadero\studio\19.0\source\rtl\common\Sy
 [View5]
 CustomEditViewType=TEditView
 Module=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\LibraryHelperU.pas
-CursorX=29
-CursorY=469
-TopLine=453
+CursorX=38
+CursorY=1292
+TopLine=1453
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -197,9 +212,9 @@ EditViewName=D:\Development\Little Earth Solutions\delphi-library-helper\windows
 [View8]
 CustomEditViewType=TEditView
 Module=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmDelphiLibraryHelperU.pas
-CursorX=31
-CursorY=501
-TopLine=479
+CursorX=3
+CursorY=492
+TopLine=477
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -230,15 +245,48 @@ EditViewName=D:\Development\Components\nuke-objects\source\vcl\base\VCL.NukeWind
 [View11]
 CustomEditViewType=TEditView
 Module=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmSearchU.pas
-CursorX=18
-CursorY=217
-TopLine=154
+CursorX=45
+CursorY=169
+TopLine=195
 LeftCol=1
 Elisions=
 Bookmarks=
 EditViewName=Borland.FormDesignerView
 
 [View12]
+CustomEditViewType=TEditView
+Module=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmAboutU.pas
+CursorX=1
+CursorY=1
+TopLine=1
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=Borland.FormDesignerView
+
+[View13]
+CustomEditViewType=TEditView
+Module=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\FileVersionInformationU.pas
+CursorX=1
+CursorY=1
+TopLine=10
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\FileVersionInformationU.pas
+
+[View14]
+CustomEditViewType=TEditView
+Module=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmAddLibraryPathU.pas
+CursorX=1
+CursorY=1
+TopLine=1
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=Borland.FormDesignerView
+
+[View15]
 CustomEditViewType=TEditView
 Module=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmFindReplaceU.pas
 CursorX=18
@@ -247,9 +295,9 @@ TopLine=27
 LeftCol=1
 Elisions=
 Bookmarks=
-EditViewName=Borland.FormDesignerView
+EditViewName=D:\Development\Little Earth Solutions\delphi-library-helper\windows\source\frmFindReplaceU.pas
 
-[View13]
+[View16]
 CustomEditViewType=TEditView
 Module=c:\program files (x86)\embarcadero\studio\19.0\source\rtl\common\System.Win.Registry.pas
 CursorX=1
@@ -260,7 +308,7 @@ Elisions=
 Bookmarks=
 EditViewName=c:\program files (x86)\embarcadero\studio\19.0\source\rtl\common\System.Win.Registry.pas
 
-[View14]
+[View17]
 CustomEditViewType=TEditView
 Module=c:\program files (x86)\embarcadero\studio\19.0\SOURCE\RTL\SYS\System.SysUtils.pas
 CursorX=1
@@ -271,7 +319,7 @@ Elisions=
 Bookmarks=
 EditViewName=c:\program files (x86)\embarcadero\studio\19.0\SOURCE\RTL\SYS\System.SysUtils.pas
 
-[View15]
+[View18]
 CustomEditViewType=TEditView
 Module=c:\program files (x86)\embarcadero\studio\19.0\SOURCE\VCL\Vcl.ComCtrls.pas
 CursorX=1
@@ -361,11 +409,11 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=2161
+Width=2000
 Height=4404
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2161
+ClientWidth=2000
 ClientHeight=4404
 TBDockHeight=5904
 LRDockWidth=2349
@@ -399,11 +447,11 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=2161
+Width=2000
 Height=2567
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2161
+ClientWidth=2000
 ClientHeight=2567
 TBDockHeight=7154
 LRDockWidth=2000
@@ -476,11 +524,11 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=2161
+Width=2000
 Height=6769
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2161
+ClientWidth=2000
 ClientHeight=6769
 TBDockHeight=5962
 LRDockWidth=2510
@@ -493,7 +541,7 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=-1390
+Left=-1421
 Top=-13
 Width=2844
 Height=6202
@@ -512,7 +560,7 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=-1507
+Left=-1538
 Top=269
 Width=276
 Height=365
@@ -617,11 +665,11 @@ State=0
 Left=0
 Top=0
 Width=2339
-Height=1221
+Height=1240
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2339
-ClientHeight=1221
+ClientHeight=1240
 TBDockHeight=2500
 LRDockWidth=3401
 Dockable=1
@@ -655,11 +703,11 @@ State=0
 Left=0
 Top=0
 Width=2339
-Height=1221
+Height=1240
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2339
-ClientHeight=1221
+ClientHeight=1240
 TBDockHeight=3212
 LRDockWidth=2823
 Dockable=1
@@ -674,11 +722,11 @@ State=0
 Left=0
 Top=0
 Width=2339
-Height=1221
+Height=1240
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2339
-ClientHeight=1221
+ClientHeight=1240
 TBDockHeight=1154
 LRDockWidth=3677
 Dockable=1
@@ -700,11 +748,11 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=2161
+Width=2000
 Height=6769
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2161
+ClientWidth=2000
 ClientHeight=6769
 TBDockHeight=4885
 LRDockWidth=7151
@@ -758,11 +806,11 @@ State=0
 Left=0
 Top=0
 Width=2339
-Height=1221
+Height=1240
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2339
-ClientHeight=1221
+ClientHeight=1240
 TBDockHeight=4837
 LRDockWidth=3562
 Dockable=1
@@ -777,11 +825,11 @@ State=0
 Left=0
 Top=0
 Width=2339
-Height=1221
+Height=1240
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2339
-ClientHeight=1221
+ClientHeight=1240
 TBDockHeight=4837
 LRDockWidth=3562
 Dockable=1
@@ -878,11 +926,11 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=2161
+Width=2000
 Height=6769
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2161
+ClientWidth=2000
 ClientHeight=6769
 TBDockHeight=4885
 LRDockWidth=5307
@@ -919,15 +967,15 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=0
-Top=18
+Left=8
+Top=8
 Width=2339
-Height=1462
+Height=1481
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2339
-ClientHeight=1462
-TBDockHeight=1462
+ClientHeight=1481
+TBDockHeight=1481
 LRDockWidth=2339
 Dockable=1
 StayOnTop=0
@@ -969,14 +1017,14 @@ Docked=1
 State=0
 Left=0
 Top=18
-Width=2161
+Width=2000
 Height=4644
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2161
+ClientWidth=2000
 ClientHeight=4644
 TBDockHeight=9010
-LRDockWidth=2161
+LRDockWidth=2000
 Dockable=1
 StayOnTop=0
 TabPosition=1
@@ -1017,14 +1065,14 @@ Docked=1
 State=0
 Left=0
 Top=523
-Width=2161
+Width=2000
 Height=2567
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=2161
+ClientWidth=2000
 ClientHeight=2567
 TBDockHeight=9010
-LRDockWidth=2161
+LRDockWidth=2000
 Dockable=1
 StayOnTop=0
 TabPosition=1

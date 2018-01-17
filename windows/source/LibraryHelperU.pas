@@ -141,7 +141,9 @@ type
     procedure Apply(ALibraryPathTemplate: TLibraryPathTemplate); overload;
     procedure Apply(AFileName: TFileName); overload;
     function AddPath(APath: string; ALibrary: TDelphiLibrary): boolean;
-    procedure DeduplicateLibrary(ALibrary: TDelphiLibrary);
+    procedure DeduplicateLibrary(ALibrary: TDelphiLibrary); overload;
+    procedure DeduplicateLibrary; overload;
+
     function OpenFolder(AFolder: string; ALibrary: TDelphiLibrary): boolean;
     function ExecuteFile(const Operation, FileName, Params, DefaultDir: string;
       ShowCmd: word): integer;
@@ -425,8 +427,9 @@ begin
 
   ApplyTemplatePaths(ALibraryPathTemplate.Common, FLibraryLinux64);
   ApplyTemplatePaths(ALibraryPathTemplate.CommonFMX, FLibraryLinux64);
-  // ApplyTemplatePaths(ALibraryPathTemplate.CommonVCL, FLibraryWin64);
   ApplyTemplatePaths(ALibraryPathTemplate.Linux64, FLibraryLinux64);
+
+  DeduplicateLibrary;
 
 end;
 
@@ -543,7 +546,21 @@ begin
       DeduplicateLibraryPaths(FLibraryWin32, ALibrary);
     dlWin64:
       DeduplicateLibraryPaths(FLibraryWin64, ALibrary);
+    dlLinux64:
+      DeduplicateLibraryPaths(FLibraryLinux64, ALibrary);
   end;
+end;
+
+procedure TDelphiInstallation.DeduplicateLibrary;
+begin
+  DeduplicateLibrary(dlAndroid32);
+  DeduplicateLibrary(dlIOS32);
+  DeduplicateLibrary(dlIOS64);
+  DeduplicateLibrary(dlIOSimulator);
+  DeduplicateLibrary(dlOSX32);
+  DeduplicateLibrary(dlWin32);
+  DeduplicateLibrary(dlWin64);
+  DeduplicateLibrary(dlLinux64);
 end;
 
 procedure TDelphiInstallation.DeduplicateLibraryPaths(ALibrary: TStrings;
@@ -571,22 +588,16 @@ begin
           (LLibrary.Find(IncludeTrailingPathDelimiter(LPath), LFindIdx)) then
         begin
           LValid := False;
-        end
-        else
-        begin
-          LLibrary.Add(LPath);
         end;
       finally
         if LValid then
         begin
-          Inc(LLibraryIdx);
-        end
-        else
-        begin
-          ALibrary.Delete(LLibraryIdx);
+          LLibrary.Add(LPath);
         end;
+        Inc(LLibraryIdx);
       end;
     end;
+    ALibrary.Text := LLibrary.Text;
   finally
     FreeAndNil(LLibrary);
   end;
@@ -698,12 +709,20 @@ begin
       Format('$(%s)', [FSystemEnvironmentVariables.Variable[LVariableIdx].Name]
       ), FSystemEnvironmentVariables.Variable[LVariableIdx].Value,
       [rfReplaceAll, rfIgnoreCase]));
+    Result := ExcludeTrailingPathDelimiter(StringReplace(Result,
+      Format('${%s}', [FSystemEnvironmentVariables.Variable[LVariableIdx].Name]
+      ), FSystemEnvironmentVariables.Variable[LVariableIdx].Value,
+      [rfReplaceAll, rfIgnoreCase]));
   end;
 
   for LVariableIdx := 0 to PreD(FEnvironmentVariables.Count) do
   begin
     Result := ExcludeTrailingPathDelimiter(StringReplace(Result,
       Format('$(%s)', [FEnvironmentVariables.Variable[LVariableIdx].Name]),
+      FEnvironmentVariables.Variable[LVariableIdx].Value,
+      [rfReplaceAll, rfIgnoreCase]));
+    Result := ExcludeTrailingPathDelimiter(StringReplace(Result,
+      Format('${%s}', [FEnvironmentVariables.Variable[LVariableIdx].Name]),
       FEnvironmentVariables.Variable[LVariableIdx].Value,
       [rfReplaceAll, rfIgnoreCase]));
   end;
@@ -868,6 +887,7 @@ var
   LLibraryKey: string;
   LValues: TStringList;
   LIdx: integer;
+  LName: string;
 begin
   FEnvironmentVariables.Clear;
   LRegistry := TRegistry.Create;
@@ -882,8 +902,11 @@ begin
       LRegistry.GetValueNames(LValues);
       for LIdx := 0 to PreD(LValues.Count) do
       begin
-        FEnvironmentVariables.Add(LValues[LIdx],
-          LRegistry.ReadString(LValues[LIdx]));
+        LName := LValues[LIdx];
+        if Trim(LName) <> '' then
+        begin
+          FEnvironmentVariables.Add(LName, LRegistry.ReadString(LValues[LIdx]));
+        end;
       end;
     end;
   finally
@@ -1031,6 +1054,7 @@ procedure TDelphiInstallation.LoadSystemEnvironmentVariables;
 var
   LVars: TStringList;
   LVarIdx: integer;
+  LName: string;
 begin
   LVars := TStringList.Create;
   try
@@ -1038,8 +1062,11 @@ begin
     GetAllEnvironemntVariables(LVars);
     for LVarIdx := 0 to PreD(LVars.Count) do
     begin
-      FSystemEnvironmentVariables.Add(LVars.Names[LVarIdx],
-        LVars.ValueFromIndex[LVarIdx]);
+      LName := LVars.Names[LVarIdx];
+      if Trim(LName) <> '' then
+      begin
+        FSystemEnvironmentVariables.Add(LName, LVars.ValueFromIndex[LVarIdx]);
+      end;
     end;
   finally
     FreeAndNil(LVars);
@@ -1227,7 +1254,7 @@ procedure TDelphiInstallation.Save;
 begin
   SaveEnvironmentVariables;
   SaveLibraries;
-  ForceEnvOptionsUpdate;
+  // ForceEnvOptionsUpdate;
   NotifyEnvironmentChanges;
 end;
 
@@ -1366,12 +1393,8 @@ begin
         begin
           LLibraryPaths.Add(ExcludeTrailingPathDelimiter
             (ALibrary[LLibraryIdx]));
-          Inc(LLibraryIdx);
-        end
-        else
-        begin
-          ALibrary.Delete(LLibraryIdx);
         end;
+        Inc(LLibraryIdx);
       end;
     end;
     ALibrary.Text := LLibraryPaths.Text;
