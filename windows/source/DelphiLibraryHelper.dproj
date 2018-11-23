@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{BA761537-1B51-48F7-928D-2CB1B0EC742A}</ProjectGuid>
-        <ProjectVersion>18.3</ProjectVersion>
+        <ProjectVersion>18.4</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <MainSource>DelphiLibraryHelper.dpr</MainSource>
         <Base>True</Base>
@@ -60,8 +60,8 @@
         <DCC_K>false</DCC_K>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <VerInfo_Keys>FileVersion=1.0.7.0;OriginalFilename=DelphiLibraryHelper.exe;ProductVersion=1.0.0.0;ProductName=Delph iLibrary Helper;CompanyName=Little Earth Solutions;LegalCopyright=Little Earth Solutions;InternalName=DelphiLibraryHelper;Comments=Tool to assist Delphi developers configuring library folders.;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName)</VerInfo_Keys>
-        <VerInfo_Release>7</VerInfo_Release>
+        <VerInfo_Keys>FileVersion=1.0.8.0;OriginalFilename=DelphiLibraryHelper.exe;ProductVersion=1.0.0.0;ProductName=Delph iLibrary Helper;CompanyName=Little Earth Solutions;LegalCopyright=Little Earth Solutions;InternalName=DelphiLibraryHelper;Comments=Tool to assist Delphi developers configuring library folders.;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Release>8</VerInfo_Release>
         <AppEnableHighDPI>true</AppEnableHighDPI>
         <Icon_MainIcon>DelphiLibraryHelper_Icon.ico</Icon_MainIcon>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
@@ -87,8 +87,8 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <VerInfo_Keys>FileVersion=1.0.7.0;OriginalFilename=DelphiLibraryHelper.exe;ProductVersion=1.0.0.0;ProductName=Delph iLibrary Helper;CompanyName=Little Earth Solutions;LegalCopyright=Little Earth Solutions;InternalName=DelphiLibraryHelper;Comments=Tool to assist Delphi developers configuring library folders.;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName)</VerInfo_Keys>
-        <VerInfo_Release>7</VerInfo_Release>
+        <VerInfo_Keys>FileVersion=1.0.8.0;OriginalFilename=DelphiLibraryHelper.exe;ProductVersion=1.0.0.0;ProductName=Delph iLibrary Helper;CompanyName=Little Earth Solutions;LegalCopyright=Little Earth Solutions;InternalName=DelphiLibraryHelper;Comments=Tool to assist Delphi developers configuring library folders.;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Release>8</VerInfo_Release>
         <Icon_MainIcon>DelphiLibraryHelper_Icon.ico</Icon_MainIcon>
         <DCC_MapFile>3</DCC_MapFile>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
@@ -105,8 +105,8 @@
         <DCC_DebugInformation>0</DCC_DebugInformation>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_Release>7</VerInfo_Release>
-        <VerInfo_Keys>FileVersion=1.0.7.0;OriginalFilename=DelphiLibraryHelper.exe;ProductVersion=1.0.0.0;ProductName=Delph iLibrary Helper;CompanyName=Little Earth Solutions;LegalCopyright=Little Earth Solutions;InternalName=DelphiLibraryHelper;Comments=Tool to assist Delphi developers configuring library folders.;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Release>8</VerInfo_Release>
+        <VerInfo_Keys>FileVersion=1.0.8.0;OriginalFilename=DelphiLibraryHelper.exe;ProductVersion=1.0.0.0;ProductName=Delph iLibrary Helper;CompanyName=Little Earth Solutions;LegalCopyright=Little Earth Solutions;InternalName=DelphiLibraryHelper;Comments=Tool to assist Delphi developers configuring library folders.;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName)</VerInfo_Keys>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>DelphiLibraryHelper_Icon.ico</Icon_MainIcon>
