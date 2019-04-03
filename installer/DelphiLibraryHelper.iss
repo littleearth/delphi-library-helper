@@ -52,6 +52,7 @@ LicenseFile=..\docs\{#ConstAppName} - License.rtf
 UninstallDisplayIcon={app}\{#ConstAppExeName}
 InternalCompressLevel=ultra
 Compression=lzma/ultra
+ChangesAssociations=yes
 
 [Types]
 Name: typical; Description: Typical Installation
@@ -88,8 +89,13 @@ Name: {group}\{#ConstAppName} Source Code; Filename: {app}\Source; Flags: folder
 Filename: "{app}\{#ConstAppExeName}"; WorkingDir: "{app}"; Flags: nowait postinstall runasoriginaluser; Description: "Launch {#ConstAppName}"
 
 [Registry]
-; Add Delphi Library Helper
-Root: "HKCU"; Subkey: "Software\Embarcadero\BDS\19.0\Transfer\Delphi Library Helper"; ValueType: string; ValueName: "Params"; Tasks: delphitools
-Root: "HKCU"; Subkey: "Software\Embarcadero\BDS\19.0\Transfer\Delphi Library Helper"; ValueType: string; ValueName: "Path"; ValueData: "{app}\DelphiLibraryHelper.exe"; Tasks: delphitools
-Root: "HKCU"; Subkey: "Software\Embarcadero\BDS\19.0\Transfer\Delphi Library Helper"; ValueType: string; ValueName: "Title"; ValueData: "Delphi Library Helper"; Tasks: delphitools
-Root: "HKCU"; Subkey: "Software\Embarcadero\BDS\19.0\Transfer\Delphi Library Helper"; ValueType: string; ValueName: "WorkingDir"; ValueData: "{app}\DelphiLibraryHelper"; Tasks: delphitools
+; Add Delphi Library Helper (Just do most recent version)
+Root: "HKCU"; Subkey: "Software\Embarcadero\BDS\20.0\Transfer\Delphi Library Helper"; ValueType: string; ValueName: "Params"; Tasks: delphitools
+Root: "HKCU"; Subkey: "Software\Embarcadero\BDS\20.0\Transfer\Delphi Library Helper"; ValueType: string; ValueName: "Path"; ValueData: "{app}\DelphiLibraryHelper.exe"; Tasks: delphitools
+Root: "HKCU"; Subkey: "Software\Embarcadero\BDS\20.0\Transfer\Delphi Library Helper"; ValueType: string; ValueName: "Title"; ValueData: "Delphi Library Helper"; Tasks: delphitools
+Root: "HKCU"; Subkey: "Software\Embarcadero\BDS\20.0\Transfer\Delphi Library Helper"; ValueType: string; ValueName: "WorkingDir"; ValueData: "{app}\DelphiLibraryHelper"; Tasks: delphitools
+; File association
+Root: HKCR; Subkey: ".dlht"; ValueData: "{#ConstAppName}";Flags: uninsdeletevalue; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "{#ConstAppName}"; ValueData: "Program {#ConstAppName}";Flags: uninsdeletekey; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "{#ConstAppName}\DefaultIcon"; ValueData: "{app}\{#ConstAppExeName},0"; ValueType: string; ValueName: ""   
+Root: HKCR; Subkey: "{#ConstAppName}\shell\open\command";ValueData: """{app}\{#ConstAppExeName}"" ""%1""";ValueType: string;ValueName: ""

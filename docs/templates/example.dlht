@@ -25,66 +25,24 @@
 
 
 [common]
-$(DELPHI_COMPONENTS)\gmlibrary\src=TRUE
-$(DELPHI_COMPONENTS)\mycomponents=TRUE
-$(DELPHI_COMPONENTS)\mycomponents\data=TRUE
-$(DELPHI_COMPONENTS)\mycomponents\json=TRUE
-$(DELPHI_COMPONENTS)\mycomponents\regex=TRUE
-$(DELPHI_COMPONENTS)\mycomponents\system=TRUE
-$(DELPHI_COMPONENTS)\mycomponents\validation=TRUE
-$(DELPHI_COMPONENTS)\mycomponents\webservices=TRUE
-$(DELPHI_COMPONENTS)\mycomponents\xml=TRUE
-$(DELPHI_COMPONENTS)\mycomponents\webservices\openweathermap=TRUE
-$(DELPHI_COMPONENTS)\mycomponents\webservices\virustotal=TRUE
+$(DELPHI_COMPONENTS)\mycomponents\common=BROWSE
+
 
 [common-fmx]
-$(DELPHI_COMPONENTS)\gmlibrary\src\FMX=TRUE
-$(DELPHI_COMPONENTS)\mycomponents\fmx=TRUE
+$(DELPHI_COMPONENTS)\mycomponents\fmx=BROWSE
+$(DELPHI_COMPONENTS)\mycomponents\fmx\forms=SEARCH
 
 [common-vcl]
-$(DELPHI_COMPONENTS)\IWBootstrapFramework\source=TRUE
-$(DELPHI_COMPONENTS)\JEDI\jcl\jcl\source\include=TRUE
-$(DELPHI_COMPONENTS)\JEDI\jvcl\jvcl\common=TRUE
-$(DELPHI_COMPONENTS)\JEDI\jvcl\jvcl\Resources=TRUE
-$(DELPHI_COMPONENTS)\JEDI\jwapi\Common=TRUE
-$(DELPHI_COMPONENTS)\JEDI\jwscl\source=TRUE
-$(DELPHI_COMPONENTS)\JEDI\jwapi\Win32API=TRUE
-$(DELPHI_COMPONENTS)\JEDI\jwapi\Win32API\jwaWindows=TRUE
-$(DELPHI_COMPONENTS)\zeosdbo\src=TRUE
-$(DELPHI_COMPONENTS)\zeosdbo\src\component=TRUE
-$(DELPHI_COMPONENTS)\zeosdbo\src\core=TRUE
-$(DELPHI_COMPONENTS)\zeosdbo\src\dbc=TRUE
-$(DELPHI_COMPONENTS)\zeosdbo\src\parsesql=TRUE
-$(DELPHI_COMPONENTS)\zeosdbo\src\plain=TRUE
-$(DELPHI_COMPONENTS)\EmbeddedWB\Source=TRUE
-$(DELPHI_COMPONENTS)\kcontrols\source=TRUE
-$(DELPHI_COMPONENTS)\dwscript\Source=TRUE
-$(DELPHI_COMPONENTS)\scalabium\smword\Sources=TRUE
-$(DELPHI_COMPONENTS)\winsoft\VCL\OCR\Source=TRUE
-$(DELPHI_COMPONENTS)\dwscript\Libraries\ClassesLib=TRUE
-$(DELPHI_COMPONENTS)\gmlibrary\src\VCL=TRUE
-$(DELPHI_COMPONENTS)\IPC\=TRUE
-$(DELPHI_COMPONENTS)\SevenZipVCL\=TRUE`
-$(DELPHI_COMPONENTS)\Rave11\Source\Win\=TRUE
-$(DELPHI_COMPONENTS)\mycomponents\vcl=TRUE
+$(DELPHI_COMPONENTS)\mycomponents\vcl=BROWSE
+$(DELPHI_COMPONENTS)\mycomponents\vcl\forms=SEARCH
 
 [win32]
-$(DELPHI_COMPONENTS)\FastMM4=TRUE
-
-[win32-25]
-$(DELPHI_COMPONENTS)\Rave11\D10_2-32=TRUE
-
-[win32-24]
-$(DELPHI_COMPONENTS)\Rave11\D10_1-32=TRUE
+$(DELPHI_COMPONENTS)\mycomponents\build\dcu\win32\=SEARCH
+$(DELPHI_COMPONENTS)\mycomponents\build\dcu\win32\debug=DEBUGDCU
 
 [win64]
-$(DELPHI_COMPONENTS)\FastMM4=TRUE
-
-[win64-25]
-$(DELPHI_COMPONENTS)\Rave11\D10_2-64=TRUE
-
-[win64-24]
-$(DELPHI_COMPONENTS)\Rave11\D10_1-64=TRUE
+$(DELPHI_COMPONENTS)\mycomponents\build\dcu\win64\=SEARCH
+$(DELPHI_COMPONENTS)\mycomponents\build\dcu\win64\debug=DEBUGDCU
 
 [osx32]
 

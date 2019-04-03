@@ -4,10 +4,10 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, System.UITypes,
-  Vcl.Buttons, Vcl.ExtCtrls, LibraryHelperU, Vcl.ComCtrls, System.Actions,
-  Vcl.ActnList, System.ImageList, Vcl.ImgList, Vcl.Menus;
+  System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
+  Vcl.StdCtrls, System.UITypes, Vcl.Buttons, Vcl.ExtCtrls, LibraryHelperU,
+  LibraryPathsU, Vcl.ComCtrls, System.Actions, Vcl.ActnList, System.ImageList,
+  Vcl.ImgList, Vcl.Menus, System.Types;
 
 type
   TfrmDelphiLibraryHelper = class(TForm)
@@ -18,7 +18,6 @@ type
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
     BitBtn3: TBitBtn;
-    comboLibraries: TComboBox;
     BitBtn4: TBitBtn;
     BitBtn7: TBitBtn;
     StatusBar: TStatusBar;
@@ -33,7 +32,6 @@ type
     ListViewLibrary: TListView;
     ActionApplyTemplate: TAction;
     BitBtn8: TBitBtn;
-    ImageList: TImageList;
     Panel3: TPanel;
     ListViewSystemEnvironmentVariables: TListView;
     Label2: TLabel;
@@ -96,6 +94,45 @@ type
     Import1: TMenuItem;
     ImportExport1: TMenuItem;
     SystemProperties1: TMenuItem;
+    Panel8: TPanel;
+    comboLibraries: TComboBox;
+    comboPathType: TComboBox;
+    TimerMain: TTimer;
+    btnTools: TBitBtn;
+    PopupMenuTools: TPopupMenu;
+    ActionCopySearchToBrowse: TAction;
+    ActionCopyBrowseToSearch: TAction;
+    Copybrowsepathstosearchpaths1: TMenuItem;
+    Copysearchpathstobrowsepaths1: TMenuItem;
+    N5: TMenuItem;
+    Copysearchpathstobrowsepaths2: TMenuItem;
+    Copybrowsepathstosearchpaths2: TMenuItem;
+    ActionCleanUp: TAction;
+    N6: TMenuItem;
+    Cleanup1: TMenuItem;
+    N7: TMenuItem;
+    Cleanup2: TMenuItem;
+    ools1: TMenuItem;
+    Copybrowsepathstosearchpaths3: TMenuItem;
+    Copysearchpathstobrowsepaths3: TMenuItem;
+    Cleanup3: TMenuItem;
+    Export2: TMenuItem;
+    Import2: TMenuItem;
+    N8: TMenuItem;
+    N9: TMenuItem;
+    ActionViewLog: TAction;
+    Viewlog1: TMenuItem;
+    ActionRemoveBrowseFromSearch: TAction;
+    Removebrowsepathsfromsearchpaths1: TMenuItem;
+    Removebrowsepathsfromsearchpaths2: TMenuItem;
+    ActionDeduplicate: TAction;
+    Deduplicate1: TMenuItem;
+    Deduplicate2: TMenuItem;
+    Deduplicate3: TMenuItem;
+    Panel9: TPanel;
+    cbDeduplicateOnSave: TCheckBox;
+    Viewlog2: TMenuItem;
+    N10: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -117,6 +154,8 @@ type
     procedure ListViewLibraryDblClick(Sender: TObject);
     procedure ActionExitExecute(Sender: TObject);
     procedure ActionAboutExecute(Sender: TObject);
+    procedure ActionCleanUpExecute(Sender: TObject);
+    procedure ActionCopyBrowseToSearchExecute(Sender: TObject);
     procedure ActionFindReplaceExecute(Sender: TObject);
     procedure ListViewLibraryCustomDrawItem(Sender: TCustomListView;
       Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
@@ -127,17 +166,25 @@ type
       (Sender: TCustomListView; Item: TListItem; State: TCustomDrawState;
       var DefaultDraw: Boolean);
     procedure ActionCopyLibraryValueExecute(Sender: TObject);
+    procedure ActionCopySearchToBrowseExecute(Sender: TObject);
+    procedure ActionDeduplicateExecute(Sender: TObject);
     procedure lblRootPathClick(Sender: TObject);
     procedure ActionSearchExecute(Sender: TObject);
     procedure ActionSystemPropertiesExecute(Sender: TObject);
     procedure ActionExportExecute(Sender: TObject);
     procedure ActionImportExecute(Sender: TObject);
+    procedure ActionRemoveBrowseFromSearchExecute(Sender: TObject);
+    procedure ActionViewLogExecute(Sender: TObject);
+    procedure btnToolsClick(Sender: TObject);
+    procedure TimerMainTimer(Sender: TObject);
   private
     FApplicationActive: Boolean;
     FModified: Boolean;
     FLibraryHelper: TLibraryHelper;
+    FDelphiIsRunning: Boolean;
     FDelphiInstallation: TDelphiInstallation;
     FActiveDelphiLibrary: TDelphiLibrary;
+    FActiveLibraryPathType: TLibraryPathType;
     procedure LoadDelphiInstallation;
     procedure LoadEnvironmentVariables;
     procedure SaveEnvironmentVariables;
@@ -146,10 +193,12 @@ type
     procedure LoadSystemEnvironmentVariables;
     function ValidatePath(APath: string): Boolean;
     procedure ProcessParameters;
+    procedure Cleanup;
     procedure ApplyTemplate(AFileName: TFileName;
-      AApplyToAllInstallations: Boolean);
+      AApplyToAllInstallations: Boolean; ADeduplicate: Boolean);
     function GetApplicationParameters(AParameter: string;
       var AValue: string): Boolean;
+
   public
     { Public declarations }
   end;
@@ -162,8 +211,8 @@ implementation
 {$R *.dfm}
 
 uses
-  frmAddLibraryPathU, frmAddEnvironmentVariableU, frmAboutU, frmFindReplaceU,
-  frmSearchU, frmProgressU;
+  dmDelphiLibraryHelperU, frmAddLibraryPathU, frmAddEnvironmentVariableU,
+  frmAboutU, frmFindReplaceU, frmSearchU, frmProgressU, LoggingU, frmLoggingU;
 
 procedure TfrmDelphiLibraryHelper.ActionAboutExecute(Sender: TObject);
 begin
@@ -236,7 +285,8 @@ begin
           FDelphiInstallation.ProductName]), mtConfirmation,
           [mbYesToAll, mbYes, mbNo], 0);
       end;
-      ApplyTemplate(LOpenDialog.FileName, LApplyToAllInstallations);
+      ApplyTemplate(LOpenDialog.FileName, LApplyToAllInstallations,
+        cbDeduplicateOnSave.Checked);
     end;
   finally
     FreeAndNil(LOpenDialog);
@@ -246,6 +296,39 @@ end;
 procedure TfrmDelphiLibraryHelper.ActionApplyTemplateUpdate(Sender: TObject);
 begin
   ActionApplyTemplate.Enabled := Assigned(FDelphiInstallation);
+end;
+
+procedure TfrmDelphiLibraryHelper.ActionCleanUpExecute(Sender: TObject);
+begin
+  if (MessageDlg('Remove all invalid paths?', mtConfirmation, [mbYes, mbNo], 0)
+    = mrYes) then
+  begin
+    ShowProgress('Performing Cleanup...');
+    try
+      Cleanup;
+      LoadLibrary;
+      FModified := True;
+    finally
+      HideProgress;
+    end;
+  end;
+end;
+
+procedure TfrmDelphiLibraryHelper.ActionCopyBrowseToSearchExecute
+  (Sender: TObject);
+begin
+  if (MessageDlg('Copy browse paths to search paths', mtConfirmation,
+    [mbYes, mbNo], 0) = mrYes) then
+  begin
+    ShowProgress('Copy browse to search...');
+    try
+      FDelphiInstallation.CopyBrowseToSearch;
+      LoadLibrary;
+      FModified := True;
+    finally
+      HideProgress;
+    end;
+  end;
 end;
 
 procedure TfrmDelphiLibraryHelper.ActionCopyLibraryPathExecute(Sender: TObject);
@@ -272,6 +355,56 @@ begin
   begin
     FDelphiInstallation.CopyToClipBoard(ListViewLibrary.Selected.Caption,
       FActiveDelphiLibrary, False);
+  end;
+end;
+
+procedure TfrmDelphiLibraryHelper.ActionCopySearchToBrowseExecute
+  (Sender: TObject);
+begin
+  if (MessageDlg('Copy search paths to browse paths', mtConfirmation,
+    [mbYes, mbNo], 0) = mrYes) then
+  begin
+    ShowProgress('Copy search to browse...');
+    try
+      FDelphiInstallation.CopySearchToBrowse;
+      LoadLibrary;
+      FModified := True;
+    finally
+      HideProgress;
+    end;
+  end;
+end;
+
+procedure TfrmDelphiLibraryHelper.ActionDeduplicateExecute(Sender: TObject);
+var
+  LExecute: Boolean;
+  LCount: integer;
+begin
+  case MessageDlg
+    ('All paths will be expanded and duplicates removed, continue?',
+    mtConfirmation, [mbYes, mbNo], 0) of
+    mrYes:
+      LExecute := True;
+  else
+    LExecute := False;
+  end;
+
+  if LExecute then
+  begin
+    ShowProgress('Deduplicating paths...');
+    try
+      LCount := FDelphiInstallation.Deduplicate;
+      HideProgress;
+      MessageDlg(Format('%d path(s) have been removed.', [LCount]),
+        mtInformation, [mbOK], 0);
+      if LCount > 0 then
+      begin
+        LoadLibrary;
+        FModified := True;
+      end;
+    finally
+      HideProgress;
+    end;
   end;
 end;
 
@@ -319,9 +452,9 @@ var
 begin
   LSaveDialog := TSaveDialog.Create(Self);
   try
-    LSaveDialog.DefaultExt := '.dlhe';
+    LSaveDialog.DefaultExt := '.dlht';
     LSaveDialog.Filter :=
-      'Delphi Library Helper Template (*.dlhe)|*.dlhe|All Files (*.*)|*' + '.*';
+      'Delphi Library Helper Template (*.dlht)|*.dlht|All Files (*.*)|*' + '.*';
     LSaveDialog.Options := [ofHideReadOnly, ofEnableSizing];
     LSaveDialog.InitialDir := ExtractFilePath(ParamStr(0));
     if LSaveDialog.Execute then
@@ -357,9 +490,9 @@ var
 begin
   LOpenDialog := TOpenDialog.Create(Self);
   try
-    LOpenDialog.DefaultExt := '.dlhe';
+    LOpenDialog.DefaultExt := '.dlht';
     LOpenDialog.Filter :=
-      'Delphi Library Helper Template (*.dlhe)|*.dlhe|All Files (*.*)|*' + '.*';
+      'Delphi Library Helper Template (*.dlht)|*.dlht|All Files (*.*)|*' + '.*';
     LOpenDialog.Options := [ofHideReadOnly, ofFileMustExist, ofEnableSizing];
     LOpenDialog.InitialDir := ExtractFilePath(ParamStr(0));
     if LOpenDialog.Execute then
@@ -384,7 +517,7 @@ begin
   begin
     StatusBar.Panels[0].Text := '';
   end;
-  if Assigned(FLibraryHelper) and (FLibraryHelper.IsDelphiRunning) then
+  if FDelphiIsRunning then
   begin
     StatusBar.Panels[1].Text := 'Delphi running.';
   end
@@ -429,6 +562,43 @@ begin
   end;
 end;
 
+procedure TfrmDelphiLibraryHelper.ActionRemoveBrowseFromSearchExecute
+  (Sender: TObject);
+var
+  LExecute, LSmartEnabled: Boolean;
+  LCount: integer;
+begin
+  LExecute := True;
+  LSmartEnabled := True;
+  case MessageDlg
+    ('Would you like to check folders for important files before removing from search folders? (This may take longer.)',
+    mtConfirmation, [mbYes, mbNo, mbCancel], 0) of
+    mrYes:
+      LSmartEnabled := True;
+    mrNo:
+      LSmartEnabled := False;
+  else
+    LExecute := False;
+  end;
+  if LExecute then
+  begin
+    ShowProgress('Removing browse paths from search paths...');
+    try
+      LCount := FDelphiInstallation.RemoveBrowseFromSearch(LSmartEnabled);
+      HideProgress;
+      MessageDlg(Format('%d path(s) have been removed.', [LCount]),
+        mtInformation, [mbOK], 0);
+      if LCount > 0 then
+      begin
+        LoadLibrary;
+        FModified := True;
+      end;
+    finally
+      HideProgress;
+    end;
+  end;
+end;
+
 procedure TfrmDelphiLibraryHelper.ActionSaveExecute(Sender: TObject);
 var
   LAllow: Boolean;
@@ -450,7 +620,8 @@ begin
     begin
       ShowProgress('Saving...');
       try
-        FDelphiInstallation.Save;
+        FDelphiInstallation.Save(cbDeduplicateOnSave.Checked);
+        LoadLibrary;
         FModified := False;
       finally
         HideProgress;
@@ -483,8 +654,20 @@ begin
     SW_SHOWNORMAL);
 end;
 
+procedure TfrmDelphiLibraryHelper.ActionViewLogExecute(Sender: TObject);
+begin
+  if frmLogging.Showing then
+  begin
+    frmLogging.BringToFront;
+  end
+  else
+  begin
+    frmLogging.Show;
+  end;
+end;
+
 procedure TfrmDelphiLibraryHelper.ApplyTemplate(AFileName: TFileName;
-  AApplyToAllInstallations: Boolean);
+  AApplyToAllInstallations: Boolean; ADeduplicate: Boolean);
 var
   LDelphiInstallation: TDelphiInstallation;
   LIdx, LTotal: integer;
@@ -502,7 +685,7 @@ begin
           UpdateProgress(LIdx + 1, LTotal + 1, 'Applying template to ' +
             LDelphiInstallation.ProductName);
           LDelphiInstallation.Apply(AFileName);
-          LDelphiInstallation.Save;
+          LDelphiInstallation.Save(ADeduplicate);
         end;
       end;
     end
@@ -517,6 +700,17 @@ begin
   end;
 end;
 
+procedure TfrmDelphiLibraryHelper.btnToolsClick(Sender: TObject);
+begin
+  with btnTools.ClientToScreen(point(0, 0)) do
+    PopupMenuTools.Popup(X, Y);
+end;
+
+procedure TfrmDelphiLibraryHelper.Cleanup;
+begin
+  FDelphiInstallation.Cleanup;
+end;
+
 procedure TfrmDelphiLibraryHelper.comboDelphiInstallationsChange
   (Sender: TObject);
 begin
@@ -525,8 +719,9 @@ end;
 
 procedure TfrmDelphiLibraryHelper.comboLibrariesChange(Sender: TObject);
 begin
-  if comboLibraries.ItemIndex <> -1 then
+  if (comboLibraries.ItemIndex <> -1) and (comboPathType.ItemIndex <> -1) then
   begin
+    FActiveLibraryPathType := TLibraryPathType(comboPathType.ItemIndex + 2);
     FActiveDelphiLibrary := TDelphiLibrary(comboLibraries.ItemIndex);
     LoadLibrary;
   end;
@@ -539,6 +734,7 @@ begin
     FApplicationActive := True;
     LoadDelphiInstallation;
     ProcessParameters;
+    TimerMainTimer(Sender);
   end;
 end;
 
@@ -586,7 +782,7 @@ begin
   if Odd(Item.Index) then
   begin
     Sender.Canvas.Font.Color := clBlack;
-    Sender.Canvas.Brush.Color := clSkyBlue;
+    Sender.Canvas.Brush.Color := clLtGray;
   end
   else
   begin
@@ -602,7 +798,7 @@ begin
   if Odd(Item.Index) then
   begin
     Sender.Canvas.Font.Color := clBlack;
-    Sender.Canvas.Brush.Color := clSkyBlue;
+    Sender.Canvas.Brush.Color := clLtGray;
   end
   else
   begin
@@ -611,8 +807,8 @@ begin
   end;
   if not ValidatePath(Item.Caption) then
   begin
-    Sender.Canvas.Font.Color := clBlack;
-    Sender.Canvas.Brush.Color := clRed;
+    Sender.Canvas.Font.Color := clWhite;
+    Sender.Canvas.Brush.Color := clMaroon;
   end;
 end;
 
@@ -639,6 +835,10 @@ begin
     end;
     FLibraryHelper.GetLbraryNames(comboLibraries.Items);
   finally
+    if comboPathType.Items.Count > 0 then
+    begin
+      comboPathType.ItemIndex := 0;
+    end;
     if comboLibraries.Items.Count > 0 then
     begin
       comboLibraries.ItemIndex := 0;
@@ -731,12 +931,22 @@ end;
 procedure TfrmDelphiLibraryHelper.ProcessParameters;
 var
   LParam: string;
+  LDeduplicate: Boolean;
 begin
+  LDeduplicate := False;
+  if GetApplicationParameters('/CLEANUP', LParam) then
+  begin
+    Cleanup;
+  end;
+  if GetApplicationParameters('/DEDUPLICATE', LParam) then
+  begin
+    LDeduplicate := True;
+  end;
   if GetApplicationParameters('/TEMPLATE', LParam) then
   begin
     if FileExists(LParam) then
     begin
-      ApplyTemplate(LParam, True);
+      ApplyTemplate(LParam, True, LDeduplicate);
       if GetApplicationParameters('/CLOSE', LParam) then
       begin
         ShowProgress('Closing...');
@@ -816,6 +1026,7 @@ begin
     LLibrary := TStringList.Create;
     ListViewLibrary.Items.BeginUpdate;
     try
+      FDelphiInstallation.LibraryPathType := FActiveLibraryPathType;
       case FActiveDelphiLibrary of
         dlAndroid32:
           LLibrary.Text := FDelphiInstallation.LibraryAndroid32;
@@ -857,6 +1068,12 @@ begin
       ListViewLibrary.Items.EndUpdate;
     end;
   end;
+end;
+
+procedure TfrmDelphiLibraryHelper.TimerMainTimer(Sender: TObject);
+begin
+  FDelphiIsRunning := Assigned(FLibraryHelper) and
+    (FLibraryHelper.IsDelphiRunning);
 end;
 
 function TfrmDelphiLibraryHelper.ValidatePath(APath: string): Boolean;

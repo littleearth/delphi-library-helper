@@ -58,10 +58,11 @@
         <DCC_S>false</DCC_S>
         <DCC_F>false</DCC_F>
         <DCC_K>false</DCC_K>
+        <Custom_Styles>Carbon|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Carbon.vsf</Custom_Styles>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <VerInfo_Keys>FileVersion=1.0.8.0;OriginalFilename=DelphiLibraryHelper.exe;ProductVersion=1.0.0.0;ProductName=Delph iLibrary Helper;CompanyName=Little Earth Solutions;LegalCopyright=Little Earth Solutions;InternalName=DelphiLibraryHelper;Comments=Tool to assist Delphi developers configuring library folders.;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName)</VerInfo_Keys>
-        <VerInfo_Release>8</VerInfo_Release>
+        <VerInfo_Keys>FileVersion=1.0.9.0;OriginalFilename=DelphiLibraryHelper.exe;ProductVersion=1.0.0.0;ProductName=Delph iLibrary Helper;CompanyName=Little Earth Solutions;LegalCopyright=Little Earth Solutions;InternalName=DelphiLibraryHelper;Comments=Tool to assist Delphi developers configuring library folders.;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Release>9</VerInfo_Release>
         <AppEnableHighDPI>true</AppEnableHighDPI>
         <Icon_MainIcon>DelphiLibraryHelper_Icon.ico</Icon_MainIcon>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
@@ -87,8 +88,8 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <VerInfo_Keys>FileVersion=1.0.8.0;OriginalFilename=DelphiLibraryHelper.exe;ProductVersion=1.0.0.0;ProductName=Delph iLibrary Helper;CompanyName=Little Earth Solutions;LegalCopyright=Little Earth Solutions;InternalName=DelphiLibraryHelper;Comments=Tool to assist Delphi developers configuring library folders.;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName)</VerInfo_Keys>
-        <VerInfo_Release>8</VerInfo_Release>
+        <VerInfo_Keys>FileVersion=1.0.9.0;OriginalFilename=DelphiLibraryHelper.exe;ProductVersion=1.0.0.0;ProductName=Delph iLibrary Helper;CompanyName=Little Earth Solutions;LegalCopyright=Little Earth Solutions;InternalName=DelphiLibraryHelper;Comments=Tool to assist Delphi developers configuring library folders.;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Release>9</VerInfo_Release>
         <Icon_MainIcon>DelphiLibraryHelper_Icon.ico</Icon_MainIcon>
         <DCC_MapFile>3</DCC_MapFile>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
@@ -105,8 +106,8 @@
         <DCC_DebugInformation>0</DCC_DebugInformation>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_Release>8</VerInfo_Release>
-        <VerInfo_Keys>FileVersion=1.0.8.0;OriginalFilename=DelphiLibraryHelper.exe;ProductVersion=1.0.0.0;ProductName=Delph iLibrary Helper;CompanyName=Little Earth Solutions;LegalCopyright=Little Earth Solutions;InternalName=DelphiLibraryHelper;Comments=Tool to assist Delphi developers configuring library folders.;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Release>9</VerInfo_Release>
+        <VerInfo_Keys>FileVersion=1.0.9.0;OriginalFilename=DelphiLibraryHelper.exe;ProductVersion=1.0.0.0;ProductName=Delph iLibrary Helper;CompanyName=Little Earth Solutions;LegalCopyright=Little Earth Solutions;InternalName=DelphiLibraryHelper;Comments=Tool to assist Delphi developers configuring library folders.;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName)</VerInfo_Keys>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>DelphiLibraryHelper_Icon.ico</Icon_MainIcon>
@@ -146,6 +147,16 @@
             <Form>frmProgress</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="dmDelphiLibraryHelperU.pas">
+            <Form>dmDelphiLibraryHelper</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="LoggingU.pas"/>
+        <DCCReference Include="frmLoggingU.pas">
+            <Form>frmLogging</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -167,8 +178,10 @@
                     <Source Name="MainSource">DelphiLibraryHelper.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k240.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp240.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k250.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp250.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\19.0\Bpl\LockBox3VCLDD250.bpl">TurboPack LockBox 3 VCL designtime package</Excluded_Packages>
+                    <Excluded_Packages Name="D:\Development\Components\TMS\FlexCelVCLNT\Packages\dTokyo\bpl\Win32\VCL_FlexCel_Components_DESIGN250.bpl">FlexCel Visual Components for VCL (Design)</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">

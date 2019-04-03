@@ -25,17 +25,24 @@ uses
   System.Classes, System.Generics.Collections;
 
 type
+  TLibraryPathType = (dlpNone, dlpAll, dlpSearch, dlpBrowse, dlpDebugDCU);
+
+type
   TLibraryPath = class
   private
     FPath: string;
-    FEnabled: boolean;
+    FPathType: TLibraryPathType;
     procedure SetEnabled(const Value: boolean);
     procedure SetPath(const Value: string);
     function GetEnabled: boolean;
+    procedure SetPathType(const Value: TLibraryPathType);
   protected
   public
+    class function PathTypeFromString(AText: string): TLibraryPathType;
+    class function PathTypeToString(APathType: TLibraryPathType): string;
     property Enabled: boolean read GetEnabled write SetEnabled;
     property Path: string read FPath write SetPath;
+    property PathType: TLibraryPathType read FPathType write SetPathType;
   end;
 
 type
@@ -50,12 +57,26 @@ type
   public
     constructor Create; reintroduce;
     destructor Destroy; override;
-    procedure AsStringList(AStrings: TStrings; AEnabledOnly: boolean = True);
+    procedure Sort;
+    procedure AsStrings(AStrings: TStrings;
+      APathType: TLibraryPathType = dlpSearch);
+    function AsString(APathType: TLibraryPathType = dlpSearch): string;
+    function AsDelimitedString(APathType: TLibraryPathType;
+      ADelimeter: string = ';'): string;
+    procedure FromString(APaths: string; APathType: TLibraryPathType);
+    procedure FromStrings(APaths: TStrings; APathType: TLibraryPathType);
+    procedure FromDelimitedString(APaths: string; APathType: TLibraryPathType;
+      ADelimeter: string = ';');
+    procedure Delete(AIndex: integer);
     function Count: integer;
-    procedure Clear;
-    function Add(APath: string; AEnabled: boolean): integer;
+    function Find(APath: string; ALibraryPathType: TLibraryPathType)
+      : TLibraryPath;
+    function FindByIndex(APath: string;
+      ALibraryPathType: TLibraryPathType): integer;
+    procedure Clear(APathType: TLibraryPathType = dlpAll);
+    procedure Copy(ALibraryPaths: TLibraryPaths);
+    function Add(APath: string; ALibraryPathType: TLibraryPathType): integer;
     property Path[AIndex: integer]: TLibraryPath read GetLibraryPath;
-
   end;
 
 type
@@ -97,7 +118,7 @@ type
 implementation
 
 uses
-  System.IniFiles;
+  System.IniFiles, System.Generics.Defaults, Winapi.ShLwApi, LoggingU;
 
 { TLibraryPaths }
 
@@ -192,6 +213,8 @@ var
   LINIFile: TIniFile;
   LSectionList: TStringList;
   LSectionIdx: integer;
+  LPath: string;
+  LPathType: TLibraryPathType;
 begin
   if not AAppend then
     ALibraryPathList.Clear;
@@ -203,10 +226,13 @@ begin
       LINIFile.ReadSection(ASectionName, LSectionList);
       for LSectionIdx := 0 to Pred(LSectionList.Count) do
       begin
-        ALibraryPathList.Add(LSectionList[LSectionIdx],
-          SameText('True', LINIFile.ReadString(ASectionName,
-          LSectionList[LSectionIdx], 'True')));
+        LPath := LSectionList[LSectionIdx];
+        LPathType := TLibraryPath.PathTypeFromString
+          (LINIFile.ReadString(ASectionName, LSectionList[LSectionIdx],
+          'None'));
+        ALibraryPathList.Add(LPath, LPathType);
       end;
+      ALibraryPathList.Sort;
     finally
       FreeAndNil(LSectionList);
       FreeAndNil(LINIFile);
@@ -234,26 +260,75 @@ end;
 
 { TLibraryPaths }
 
-function TLibraryPaths.Add(APath: string; AEnabled: boolean): integer;
+function TLibraryPaths.Add(APath: string;
+  ALibraryPathType: TLibraryPathType): integer;
 var
   LLibraryPath: TLibraryPath;
 begin
-  LLibraryPath := TLibraryPath.Create;
-  LLibraryPath.Path := APath;
-  LLibraryPath.Enabled := AEnabled;
-  Result := FLibraryPathList.Add(LLibraryPath);
+  Result := -1;
+  if Trim(APath) <> '' then
+  begin
+    Result := FindByIndex(APath, ALibraryPathType);
+    if Result = -1 then
+    begin
+      LLibraryPath := TLibraryPath.Create;
+      LLibraryPath.Path := APath;
+      LLibraryPath.PathType := ALibraryPathType;
+      Result := FLibraryPathList.Add(LLibraryPath);
+    end;
+  end;
 end;
 
-procedure TLibraryPaths.AsStringList(AStrings: TStrings; AEnabledOnly: boolean);
+function TLibraryPaths.AsDelimitedString(APathType: TLibraryPathType;
+  ADelimeter: string): string;
+var
+  LStringList: TStringList;
+  LIdx: integer;
+begin
+  Result := '';
+  LStringList := TStringList.Create;
+  try
+    AsStrings(LStringList, APathType);
+    for LIdx := 0 to Pred(LStringList.Count) do
+    begin
+      if (Trim(LStringList[LIdx]) <> '') then
+      begin
+        if Trim(Result) <> '' then
+        begin
+          Result := Result + ADelimeter;
+        end;
+        Result := Result + ExcludeTrailingPathDelimiter(LStringList[LIdx]);
+      end;
+    end;
+  finally
+    FreeAndNil(LStringList);
+  end;
+end;
+
+function TLibraryPaths.AsString(APathType: TLibraryPathType): string;
+var
+  LStringList: TStringList;
+begin
+  LStringList := TStringList.Create;
+  try
+    AsStrings(LStringList, APathType);
+    Result := LStringList.Text;
+  finally
+    FreeAndNil(LStringList);
+  end;
+end;
+
+procedure TLibraryPaths.AsStrings(AStrings: TStrings;
+  APathType: TLibraryPathType);
 var
   LLibraryPath: TLibraryPath;
 begin
-  if AssigneD(AStrings) then
+  if Assigned(AStrings) then
   begin
     AStrings.Clear;
     for LLibraryPath in FLibraryPathList do
     begin
-      if (LLibraryPath.Enabled) or (not AEnabledOnly) then
+      if (LLibraryPath.PathType = APathType) or (APathType = dlpAll) then
       begin
         AStrings.Add(LLibraryPath.Path);
       end;
@@ -265,9 +340,41 @@ begin
   end;
 end;
 
-procedure TLibraryPaths.Clear;
+procedure TLibraryPaths.Clear(APathType: TLibraryPathType);
+var
+  LIdx: integer;
 begin
-  FLibraryPathList.Clear;
+  if APathType = dlpAll then
+  begin
+    FLibraryPathList.Clear;
+  end
+  else
+  begin
+    LIdx := 0;
+    while LIdx < Count do
+    begin
+      if FLibraryPathList[LIdx].PathType = APathType then
+      begin
+        FLibraryPathList.Delete(LIdx);
+      end
+      else
+      begin
+        Inc(LIdx);
+      end;
+    end;
+  end;
+
+end;
+
+procedure TLibraryPaths.Copy(ALibraryPaths: TLibraryPaths);
+var
+  LLibraryPath: TLibraryPath;
+begin
+  Clear;
+  for LLibraryPath in FLibraryPathList do
+  begin
+    Add(LLibraryPath.Path, LLibraryPath.PathType);
+  end;
 end;
 
 function TLibraryPaths.Count: integer;
@@ -280,6 +387,11 @@ begin
   FLibraryPathList := TLibraryPathList.Create(True);
 end;
 
+procedure TLibraryPaths.Delete(AIndex: integer);
+begin
+  FLibraryPathList.Delete(AIndex);
+end;
+
 destructor TLibraryPaths.Destroy;
 begin
   try
@@ -289,26 +401,157 @@ begin
   end;
 end;
 
+function TLibraryPaths.FindByIndex(APath: string;
+  ALibraryPathType: TLibraryPathType): integer;
+var
+  LIdx: integer;
+begin
+  Result := -1;
+  LIdx := 0;
+  while (Result = -1) and (LIdx < Count) do
+  begin
+    if SameText(FLibraryPathList[LIdx].Path, IncludeTrailingPathDelimiter(APath)
+      ) and (FLibraryPathList[LIdx].PathType = ALibraryPathType) then
+    begin
+      Result := LIdx;
+    end;
+    Inc(LIdx);
+  end;
+end;
+
+procedure TLibraryPaths.FromDelimitedString(APaths: string;
+  APathType: TLibraryPathType; ADelimeter: string);
+var
+  LPath: string;
+  LPaths: TStringList;
+begin
+  LPaths := TStringList.Create;
+  try
+    LPath := APaths;
+    LPath := StringReplace(LPath, ADelimeter, #13#10, [rfReplaceAll]);
+    LPaths.Text := LPath;
+    FromStrings(LPaths, APathType);
+  finally
+    FreeAndNil(LPaths);
+  end;
+end;
+
+procedure TLibraryPaths.FromString(APaths: string; APathType: TLibraryPathType);
+var
+  LPaths: TStringList;
+begin
+  LPaths := TStringList.Create;
+  try
+    LPaths.Text := APaths;
+    FromStrings(LPaths, APathType);
+  finally
+    FreeAndNil(LPaths);
+  end;
+end;
+
+procedure TLibraryPaths.FromStrings(APaths: TStrings;
+  APathType: TLibraryPathType);
+var
+  LPath: string;
+begin
+  Clear(APathType);
+  for LPath in APaths do
+  begin
+    if Trim(LPath) <> '' then
+    begin
+      Add(LPath, APathType);
+    end;
+  end;
+  Sort;
+end;
+
+function TLibraryPaths.Find(APath: string; ALibraryPathType: TLibraryPathType)
+  : TLibraryPath;
+var
+  LIdx: integer;
+begin
+  Result := nil;
+  LIdx := FindByIndex(APath, ALibraryPathType);
+  if LIdx <> -1 then
+  begin
+    Result := FLibraryPathList[LIdx];
+  end;
+
+end;
+
 function TLibraryPaths.GetLibraryPath(AIndex: integer): TLibraryPath;
 begin
   Result := FLibraryPathList.Items[AIndex];
+end;
+
+procedure TLibraryPaths.Sort;
+begin
+  FLibraryPathList.Sort(TComparer<TLibraryPath>.Construct(
+    function(const L, R: TLibraryPath): integer
+    begin
+      Result := StrCmpLogicalW(PChar(L.Path), PChar(R.Path));
+    end));
 end;
 
 { TLibraryPath }
 
 function TLibraryPath.GetEnabled: boolean;
 begin
-  Result := (FEnabled);
+  Result := FPathType = dlpNone;
+end;
+
+class function TLibraryPath.PathTypeFromString(AText: string): TLibraryPathType;
+begin
+  Result := dlpNone;
+  if SameText(AText, 'None') then
+    Result := dlpNone;
+  if SameText(AText, 'Browse') then
+    Result := dlpBrowse;
+  if SameText(AText, 'DebugDCU') then
+    Result := dlpDebugDCU;
+  if SameText(AText, 'Search') then
+    Result := dlpSearch;
+  if SameText(AText, 'All') then
+    Result := dlpAll;
+  // older entries had true or false for enabled.
+  if SameText(AText, 'False') then
+    Result := dlpNone;
+  if SameText(AText, 'True') then
+    Result := dlpSearch;
+end;
+
+class function TLibraryPath.PathTypeToString
+  (APathType: TLibraryPathType): string;
+begin
+  case APathType of
+    dlpAll:
+      Result := 'All';
+    dlpSearch:
+      Result := 'Search';
+    dlpBrowse:
+      Result := 'Browse';
+    dlpDebugDCU:
+      Result := 'DebugDCU';
+  else
+    begin
+      Result := 'None';
+    end;
+  end;
 end;
 
 procedure TLibraryPath.SetEnabled(const Value: boolean);
 begin
-  FEnabled := Value;
+  FPathType := dlpNone;
 end;
 
 procedure TLibraryPath.SetPath(const Value: string);
 begin
   FPath := IncludeTrailingPathDelimiter(Value);
+end;
+
+procedure TLibraryPath.SetPathType(const Value: TLibraryPathType);
+begin
+  FPathType := Value;
 end;
 
 end.

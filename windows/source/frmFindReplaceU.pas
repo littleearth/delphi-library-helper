@@ -16,7 +16,6 @@ type
     btnOk: TBitBtn;
     btnCancel: TBitBtn;
     ActionList: TActionList;
-    ImageList: TImageList;
     ActionReplace: TAction;
     ActionCancel: TAction;
     Panel3: TPanel;
@@ -58,7 +57,7 @@ implementation
 {$R *.dfm}
 
 uses
-  frmProgressU;
+  frmProgressU, dmDelphiLibraryHelperU;
 
 procedure TfrmFindReplace.ActionCancelExecute(Sender: TObject);
 begin

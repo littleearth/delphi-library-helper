@@ -160,7 +160,7 @@ procedure HideProgress;
 
 implementation
 
-uses DateUtils;
+uses DateUtils, dmDelphiLibraryHelperU;
 
 {$R *.dfm}
 

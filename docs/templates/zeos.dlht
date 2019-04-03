@@ -5,12 +5,12 @@
 
 
 [common-vcl]
-$(DELPHI_COMPONENTS)\zeosdbo\src=TRUE
-$(DELPHI_COMPONENTS)\zeosdbo\src\component=TRUE
-$(DELPHI_COMPONENTS)\zeosdbo\src\core=TRUE
-$(DELPHI_COMPONENTS)\zeosdbo\src\dbc=TRUE
-$(DELPHI_COMPONENTS)\zeosdbo\src\parsesql=TRUE
-$(DELPHI_COMPONENTS)\zeosdbo\src\plain=TRUE
+$(DELPHI_COMPONENTS)\zeosdbo\src=BROWSE
+$(DELPHI_COMPONENTS)\zeosdbo\src\component=BROWSE
+$(DELPHI_COMPONENTS)\zeosdbo\src\core=BROWSE
+$(DELPHI_COMPONENTS)\zeosdbo\src\dbc=BROWSE
+$(DELPHI_COMPONENTS)\zeosdbo\src\parsesql=BROWSE
+$(DELPHI_COMPONENTS)\zeosdbo\src\plain=BROWSE
 
 [win32]
 

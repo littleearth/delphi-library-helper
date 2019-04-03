@@ -4,10 +4,10 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, System.Actions,
-  Vcl.ActnList, System.ImageList, Vcl.ImgList, Vcl.Buttons, Vcl.ExtCtrls,
-  Vcl.ComCtrls, LibraryHelperU, Vcl.Menus;
+  System.Classes, Vcl.Graphics, System.UITypes, Vcl.Controls, Vcl.Forms,
+  Vcl.Dialogs, Vcl.StdCtrls, System.Actions, Vcl.ActnList, System.ImageList,
+  Vcl.ImgList, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ComCtrls, LibraryHelperU,
+  Vcl.Menus;
 
 type
   TfrmSearch = class(TForm)
@@ -16,7 +16,6 @@ type
     btnOk: TBitBtn;
     btnCancel: TBitBtn;
     ActionList: TActionList;
-    ImageList: TImageList;
     ActionFind: TAction;
     ActionClose: TAction;
     Panel3: TPanel;
@@ -59,7 +58,7 @@ implementation
 {$R *.dfm}
 
 uses
-  System.StrUtils, frmProgressU;
+  System.StrUtils, frmProgressU, dmDelphiLibraryHelperU;
 
 procedure TfrmSearch.ActionCloseExecute(Sender: TObject);
 begin

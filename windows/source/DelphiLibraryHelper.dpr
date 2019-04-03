@@ -17,7 +17,12 @@ uses
   FileVersionInformationU in 'FileVersionInformationU.pas',
   frmFindReplaceU in 'frmFindReplaceU.pas' {frmFindReplace},
   frmSearchU in 'frmSearchU.pas' {frmSearch},
-  frmProgressU in 'frmProgressU.pas' {frmProgress};
+  frmProgressU in 'frmProgressU.pas' {frmProgress},
+  Vcl.Themes,
+  Vcl.Styles,
+  dmDelphiLibraryHelperU in 'dmDelphiLibraryHelperU.pas' {dmDelphiLibraryHelper: TDataModule},
+  LoggingU in 'LoggingU.pas',
+  frmLoggingU in 'frmLoggingU.pas' {frmLogging};
 
 {$R *.res}
 
@@ -51,7 +56,10 @@ begin
   end;
 
   Application.MainFormOnTaskbar := True;
+  TStyleManager.TrySetStyle('Carbon');
   Application.CreateForm(TfrmDelphiLibraryHelper, frmDelphiLibraryHelper);
+  Application.CreateForm(TdmDelphiLibraryHelper, dmDelphiLibraryHelper);
+  Application.CreateForm(TfrmLogging, frmLogging);
   Application.Run;
 
 end.

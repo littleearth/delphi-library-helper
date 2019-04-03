@@ -31,7 +31,6 @@ type
     CheckAll1: TMenuItem;
     UncheckAll1: TMenuItem;
     ActionList: TActionList;
-    ImageList: TImageList;
     ActionOk: TAction;
     ActionCancel: TAction;
     Panel3: TPanel;
@@ -60,6 +59,10 @@ type
 implementation
 
 {$R *.dfm}
+
+uses
+  dmDelphiLibraryHelperU;
+
 { TfrmAddLibraryPath }
 
 procedure TfrmAddLibraryPath.ActionCancelExecute(Sender: TObject);

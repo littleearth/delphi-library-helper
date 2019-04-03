@@ -18,7 +18,6 @@ type
     ActionList: TActionList;
     ActionOk: TAction;
     ActionCancel: TAction;
-    ImageList: TImageList;
     Panel1: TPanel;
     Label1: TLabel;
     editName: TEdit;
@@ -35,6 +34,10 @@ type
 implementation
 
 {$R *.dfm}
+
+uses
+  dmDelphiLibraryHelperU;
+
 { TfrmAddEnvironmentVariable }
 
 procedure TfrmAddEnvironmentVariable.ActionCancelExecute(Sender: TObject);
