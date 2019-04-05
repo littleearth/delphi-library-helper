@@ -411,10 +411,19 @@ end;
 procedure TfrmDelphiLibraryHelper.ActionDeleteAllLibraryPathsExecute
   (Sender: TObject);
 begin
-  if (MessageDlg('Delete All?', mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
-  begin
-    ListViewLibrary.Clear;
-    SaveLibrary;
+  case MessageDlg
+    (Format('Delete all from active library (Yes) or from across all libraries (All)?',
+    []), mtConfirmation, [mbAll, mbYes, mbCancel], 0) of
+    mrAll:
+      begin
+        FDelphiInstallation.DeleteAll(FActiveLibraryPathType);
+        LoadLibrary;
+      end;
+    mrYes:
+      begin
+        ListViewLibrary.Clear;
+        SaveLibrary;
+      end;
   end;
 end;
 
@@ -670,8 +679,9 @@ procedure TfrmDelphiLibraryHelper.ApplyTemplate(AFileName: TFileName;
   AApplyToAllInstallations: Boolean; ADeduplicate: Boolean);
 var
   LDelphiInstallation: TDelphiInstallation;
-  LIdx, LTotal: integer;
+  LIdx, LTotal, LApplied: integer;
 begin
+  LApplied := 0;
   ShowProgress('Applying Template...');
   try
     if AApplyToAllInstallations then
@@ -684,15 +694,16 @@ begin
         begin
           UpdateProgress(LIdx + 1, LTotal + 1, 'Applying template to ' +
             LDelphiInstallation.ProductName);
-          LDelphiInstallation.Apply(AFileName);
+          LApplied := LApplied + LDelphiInstallation.Apply(AFileName);
           LDelphiInstallation.Save(ADeduplicate);
         end;
       end;
     end
     else
     begin
-      FDelphiInstallation.Apply(AFileName);
+      LApplied := FDelphiInstallation.Apply(AFileName);
     end;
+    UpdateProgress(100, Format('%d paths applied', [LApplied]));
     comboLibrariesChange(nil);
     FModified := not AApplyToAllInstallations;
   finally

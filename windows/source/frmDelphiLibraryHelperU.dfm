@@ -99,7 +99,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitWidth = 245
     end
     object Panel9: TPanel
       Left = 323
@@ -109,8 +108,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 2
-      ExplicitLeft = 329
-      ExplicitTop = 14
       object cbDeduplicateOnSave: TCheckBox
         AlignWithMargins = True
         Left = 3
@@ -122,9 +119,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
         Checked = True
         State = cbChecked
         TabOrder = 0
-        ExplicitLeft = 36
-        ExplicitTop = 16
-        ExplicitWidth = 97
       end
     end
   end
@@ -311,8 +305,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
         Align = alLeft
         Caption = 'Search'
         TabOrder = 5
-        ExplicitLeft = 645
-        ExplicitHeight = 35
       end
       object BitBtn2: TBitBtn
         AlignWithMargins = True
@@ -324,8 +316,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
         Align = alLeft
         Caption = 'Delete'
         TabOrder = 2
-        ExplicitLeft = 352
-        ExplicitHeight = 35
       end
       object BitBtn3: TBitBtn
         AlignWithMargins = True
@@ -337,8 +327,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
         Align = alLeft
         Caption = 'Add'
         TabOrder = 1
-        ExplicitLeft = 271
-        ExplicitHeight = 35
       end
       object BitBtn9: TBitBtn
         AlignWithMargins = True
@@ -350,8 +338,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
         Align = alLeft
         Caption = 'Delete All'
         TabOrder = 3
-        ExplicitLeft = 433
-        ExplicitHeight = 35
       end
       object BitBtn10: TBitBtn
         AlignWithMargins = True
@@ -363,8 +349,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
         Align = alLeft
         Caption = 'Replace'
         TabOrder = 4
-        ExplicitLeft = 539
-        ExplicitHeight = 35
       end
       object Panel8: TPanel
         Left = 0
@@ -374,7 +358,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 0
-        ExplicitHeight = 78
         object comboLibraries: TComboBox
           AlignWithMargins = True
           Left = 3
@@ -385,9 +368,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
           Style = csDropDownList
           TabOrder = 1
           OnChange = comboLibrariesChange
-          ExplicitLeft = 4
-          ExplicitTop = 4
-          ExplicitWidth = 21
         end
         object comboPathType: TComboBox
           AlignWithMargins = True
@@ -403,8 +383,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
             'Search'
             'Browse'
             'Debug DCU')
-          ExplicitLeft = 6
-          ExplicitTop = 7
         end
       end
     end
@@ -445,8 +423,6 @@ object frmDelphiLibraryHelper: TfrmDelphiLibraryHelper
       ViewStyle = vsReport
       OnCustomDrawItem = ListViewLibraryCustomDrawItem
       OnDblClick = ListViewLibraryDblClick
-      ExplicitTop = 56
-      ExplicitHeight = 260
     end
   end
   object GroupBox4: TGroupBox

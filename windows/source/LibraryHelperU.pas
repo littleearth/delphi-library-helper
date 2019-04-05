@@ -116,8 +116,8 @@ type
     function CreateLibraryPaths: TLibraryPaths;
     function GetProductVersion: integer;
     function GetStudioVersion: integer;
-    procedure ApplyTemplatePaths(ATemplateLibraryPaths: TLibraryPaths;
-      ALibraryPaths: TLibraryPaths);
+    function ApplyTemplatePaths(ATemplateLibraryPaths: TLibraryPaths;
+      ALibraryPaths: TLibraryPaths): integer;
     function GetAllEnvironemntVariables(const Vars: TStrings): integer;
     function GetShellFolderPath(AFolder: integer): string;
     function GetDocumentFolder: string;
@@ -134,6 +134,9 @@ type
       FileName: string = '*.*'; const Recurse: boolean = true): boolean;
     function DeduplicatPaths(ALibraryPaths: TLibraryPaths;
       ALibrary: TDelphiLibrary): integer;
+    function CopyLibraryPaths(ASourcePaths: TLibraryPaths;
+      ASourcePathType: TLibraryPathType; ADestPaths: TLibraryPaths;
+      ADestPathType: TLibraryPathType; ASkipBDSPaths: boolean = true): integer;
   public
     constructor Create(ARegistryKey: string);
     destructor Destroy; override;
@@ -142,12 +145,14 @@ type
     procedure Cleanup;
     procedure CopyBrowseToSearch;
     procedure CopySearchToBrowse;
+    procedure DeleteAll(APathType: TLibraryPathType = dlpAll);
     function Deduplicate: integer;
     function RemoveBrowseFromSearch(ASmartEnabled: boolean): integer;
     procedure ExportLibrary(AFileName: TFileName);
     procedure ImportLibrary(AFileName: TFileName);
-    procedure Apply(ALibraryPathTemplate: TLibraryPathTemplate); overload;
-    procedure Apply(AFileName: TFileName); overload;
+    function Apply(ALibraryPathTemplate: TLibraryPathTemplate)
+      : integer; overload;
+    function Apply(AFileName: TFileName): integer; overload;
     function AddPath(APath: string; ALibrary: TDelphiLibrary;
       ALibraryPathType: TLibraryPathType = dlpNone): boolean;
     function OpenFolder(AFolder: string; ALibrary: TDelphiLibrary): boolean;
@@ -216,7 +221,7 @@ implementation
 
 uses
   System.Win.Registry, Winapi.ShellAPI, Vcl.Forms, Winapi.TlHelp32, Clipbrd,
-  Winapi.ShlObj, System.IniFiles, LoggingU;
+  Winapi.ShlObj, System.IniFiles, LoggingU, System.StrUtils;
 
 constructor TLibraryHelper.Create;
 begin
@@ -400,41 +405,71 @@ end;
 
 { TDelphiVersion }
 
-procedure TDelphiInstallation.Apply(ALibraryPathTemplate: TLibraryPathTemplate);
+function TDelphiInstallation.Apply(ALibraryPathTemplate
+  : TLibraryPathTemplate): integer;
 begin
-  ApplyTemplatePaths(ALibraryPathTemplate.Common, FLibraryAndroid32);
-  ApplyTemplatePaths(ALibraryPathTemplate.CommonFMX, FLibraryAndroid32);
-  ApplyTemplatePaths(ALibraryPathTemplate.Android32, FLibraryAndroid32);
+  Result := 0;
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.Common,
+    FLibraryAndroid32);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.CommonFMX,
+    FLibraryAndroid32);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.Android32,
+    FLibraryAndroid32);
 
-  ApplyTemplatePaths(ALibraryPathTemplate.Common, FLibraryIOS32);
-  ApplyTemplatePaths(ALibraryPathTemplate.CommonFMX, FLibraryIOS32);
-  ApplyTemplatePaths(ALibraryPathTemplate.IOS32, FLibraryIOS32);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.Common,
+    FLibraryIOS32);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.CommonFMX,
+    FLibraryIOS32);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.IOS32,
+    FLibraryIOS32);
 
-  ApplyTemplatePaths(ALibraryPathTemplate.Common, FLibraryIOS64);
-  ApplyTemplatePaths(ALibraryPathTemplate.CommonFMX, FLibraryIOS64);
-  ApplyTemplatePaths(ALibraryPathTemplate.IOS64, FLibraryIOS64);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.Common,
+    FLibraryIOS64);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.CommonFMX,
+    FLibraryIOS64);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.IOS64,
+    FLibraryIOS64);
 
-  ApplyTemplatePaths(ALibraryPathTemplate.Common, FLibraryIOSSimulator);
-  ApplyTemplatePaths(ALibraryPathTemplate.CommonFMX, FLibraryIOSSimulator);
-  ApplyTemplatePaths(ALibraryPathTemplate.IOS32, FLibraryIOSSimulator);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.Common,
+    FLibraryIOSSimulator);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.CommonFMX,
+    FLibraryIOSSimulator);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.IOS32,
+    FLibraryIOSSimulator);
 
-  ApplyTemplatePaths(ALibraryPathTemplate.Common, FLibraryOSX32);
-  ApplyTemplatePaths(ALibraryPathTemplate.CommonFMX, FLibraryOSX32);
-  ApplyTemplatePaths(ALibraryPathTemplate.OSX32, FLibraryOSX32);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.Common,
+    FLibraryOSX32);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.CommonFMX,
+    FLibraryOSX32);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.OSX32,
+    FLibraryOSX32);
 
-  ApplyTemplatePaths(ALibraryPathTemplate.Common, FLibraryWin32);
-  ApplyTemplatePaths(ALibraryPathTemplate.CommonFMX, FLibraryWin32);
-  ApplyTemplatePaths(ALibraryPathTemplate.CommonVCL, FLibraryWin32);
-  ApplyTemplatePaths(ALibraryPathTemplate.Win32, FLibraryWin32);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.Common,
+    FLibraryWin32);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.CommonFMX,
+    FLibraryWin32);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.CommonVCL,
+    FLibraryWin32);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.Win32,
+    FLibraryWin32);
 
-  ApplyTemplatePaths(ALibraryPathTemplate.Common, FLibraryWin64);
-  ApplyTemplatePaths(ALibraryPathTemplate.CommonFMX, FLibraryWin64);
-  ApplyTemplatePaths(ALibraryPathTemplate.CommonVCL, FLibraryWin64);
-  ApplyTemplatePaths(ALibraryPathTemplate.Win64, FLibraryWin64);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.Common,
+    FLibraryWin64);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.CommonFMX,
+    FLibraryWin64);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.CommonVCL,
+    FLibraryWin64);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.Win64,
+    FLibraryWin64);
 
-  ApplyTemplatePaths(ALibraryPathTemplate.Common, FLibraryLinux64);
-  ApplyTemplatePaths(ALibraryPathTemplate.CommonFMX, FLibraryLinux64);
-  ApplyTemplatePaths(ALibraryPathTemplate.Linux64, FLibraryLinux64);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.Common,
+    FLibraryLinux64);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.CommonFMX,
+    FLibraryLinux64);
+  Result := Result + ApplyTemplatePaths(ALibraryPathTemplate.Linux64,
+    FLibraryLinux64);
+
+  Log('Template applied %d path(s)', [Result]);
 
 end;
 
@@ -472,31 +507,37 @@ begin
   end;
 end;
 
-procedure TDelphiInstallation.Apply(AFileName: TFileName);
+function TDelphiInstallation.Apply(AFileName: TFileName): integer;
 var
   LLibraryPathTemplate: TLibraryPathTemplate;
 begin
   LLibraryPathTemplate := TLibraryPathTemplate.Create;
   try
     LLibraryPathTemplate.Load(AFileName, GetProductVersion);
-    Apply(LLibraryPathTemplate);
+    Result := Apply(LLibraryPathTemplate);
   finally
     FreeAndNil(LLibraryPathTemplate);
   end;
 end;
 
-procedure TDelphiInstallation.ApplyTemplatePaths(ATemplateLibraryPaths
-  : TLibraryPaths; ALibraryPaths: TLibraryPaths);
+function TDelphiInstallation.ApplyTemplatePaths(ATemplateLibraryPaths
+  : TLibraryPaths; ALibraryPaths: TLibraryPaths): integer;
 var
   LPathIdx: integer;
   LPath: string;
   LPathType: TLibraryPathType;
 begin
+  Result := 0;
   for LPathIdx := 0 to PreD(ATemplateLibraryPaths.Count) do
   begin
     LPath := ATemplateLibraryPaths.Path[LPathIdx].Path;
     LPathType := ATemplateLibraryPaths.Path[LPathIdx].PathType;
-    ALibraryPaths.Add(LPath, LPathType);
+    if ALibraryPaths.Add(LPath, LPathType, true) <> -1 then
+    begin
+      Log('Template path "%s (%s)" has been added.',
+        [LPath, TLibraryPath.PathTypeToString(LPathType)]);
+      Inc(Result);
+    end;
   end;
 
 end;
@@ -515,42 +556,58 @@ end;
 
 procedure TDelphiInstallation.CopyBrowseToSearch;
 begin
-  FLibraryAndroid32.FromDelimitedString
-    (FLibraryAndroid32.AsDelimitedString(dlpBrowse), dlpSearch);
-  FLibraryIOS32.FromDelimitedString(FLibraryIOS32.AsDelimitedString(dlpBrowse),
+  CopyLibraryPaths(FLibraryAndroid32, dlpBrowse, FLibraryAndroid32, dlpSearch);
+  CopyLibraryPaths(FLibraryIOS32, dlpBrowse, FLibraryIOS32, dlpSearch);
+  CopyLibraryPaths(FLibraryIOS64, dlpBrowse, FLibraryIOS64, dlpSearch);
+  CopyLibraryPaths(FLibraryIOSSimulator, dlpBrowse, FLibraryIOSSimulator,
     dlpSearch);
-  FLibraryIOS64.FromDelimitedString(FLibraryIOS64.AsDelimitedString(dlpBrowse),
-    dlpSearch);
-  FLibraryIOSSimulator.FromDelimitedString
-    (FLibraryIOSSimulator.AsDelimitedString(dlpBrowse), dlpSearch);
-  FLibraryOSX32.FromDelimitedString(FLibraryOSX32.AsDelimitedString(dlpBrowse),
-    dlpSearch);
-  FLibraryWin32.FromDelimitedString(FLibraryWin32.AsDelimitedString(dlpBrowse),
-    dlpSearch);
-  FLibraryWin64.FromDelimitedString(FLibraryWin64.AsDelimitedString(dlpBrowse),
-    dlpSearch);
-  FLibraryLinux64.FromDelimitedString
-    (FLibraryLinux64.AsDelimitedString(dlpBrowse), dlpSearch);
+  CopyLibraryPaths(FLibraryOSX32, dlpBrowse, FLibraryOSX32, dlpSearch);
+  CopyLibraryPaths(FLibraryWin32, dlpBrowse, FLibraryWin32, dlpSearch);
+  CopyLibraryPaths(FLibraryWin64, dlpBrowse, FLibraryWin64, dlpSearch);
+  CopyLibraryPaths(FLibraryLinux64, dlpBrowse, FLibraryLinux64, dlpSearch);
+end;
+
+function TDelphiInstallation.CopyLibraryPaths(ASourcePaths: TLibraryPaths;
+  ASourcePathType: TLibraryPathType; ADestPaths: TLibraryPaths;
+  ADestPathType: TLibraryPathType; ASkipBDSPaths: boolean): integer;
+var
+  LSourcePath, LDestPath: TLibraryPath;
+  LAddPath: boolean;
+  LTotal, LIdx: integer;
+begin
+  Result := 0;
+  LTotal := ASourcePaths.Count;
+  for LIdx := 0 to LTotal do
+  begin
+    LSourcePath := ASourcePaths.Path[LIdx];
+    if LSourcePath.PathType = ASourcePathType then
+    begin
+      LAddPath := true;
+      if ASkipBDSPaths then
+      begin
+        LAddPath := StartsText('$(BDS', LSourcePath.Path);
+      end;
+
+      if LAddPath then
+      begin
+        ADestPaths.Add(LSourcePath.Path, ADestPathType);
+        Inc(Result);
+      end;
+    end;
+  end;
 end;
 
 procedure TDelphiInstallation.CopySearchToBrowse;
 begin
-  FLibraryAndroid32.FromDelimitedString
-    (FLibraryAndroid32.AsDelimitedString(dlpSearch), dlpBrowse);
-  FLibraryIOS32.FromDelimitedString(FLibraryIOS32.AsDelimitedString(dlpSearch),
+  CopyLibraryPaths(FLibraryAndroid32, dlpSearch, FLibraryAndroid32, dlpBrowse);
+  CopyLibraryPaths(FLibraryIOS32, dlpSearch, FLibraryIOS32, dlpBrowse);
+  CopyLibraryPaths(FLibraryIOS64, dlpSearch, FLibraryIOS64, dlpBrowse);
+  CopyLibraryPaths(FLibraryIOSSimulator, dlpSearch, FLibraryIOSSimulator,
     dlpBrowse);
-  FLibraryIOS64.FromDelimitedString(FLibraryIOS64.AsDelimitedString(dlpSearch),
-    dlpBrowse);
-  FLibraryIOSSimulator.FromDelimitedString
-    (FLibraryIOSSimulator.AsDelimitedString(dlpSearch), dlpBrowse);
-  FLibraryOSX32.FromDelimitedString(FLibraryOSX32.AsDelimitedString(dlpSearch),
-    dlpBrowse);
-  FLibraryWin32.FromDelimitedString(FLibraryWin32.AsDelimitedString(dlpSearch),
-    dlpBrowse);
-  FLibraryWin64.FromDelimitedString(FLibraryWin64.AsDelimitedString(dlpSearch),
-    dlpBrowse);
-  FLibraryLinux64.FromDelimitedString
-    (FLibraryLinux64.AsDelimitedString(dlpSearch), dlpBrowse);
+  CopyLibraryPaths(FLibraryOSX32, dlpSearch, FLibraryOSX32, dlpBrowse);
+  CopyLibraryPaths(FLibraryWin32, dlpSearch, FLibraryWin32, dlpBrowse);
+  CopyLibraryPaths(FLibraryWin64, dlpSearch, FLibraryWin64, dlpBrowse);
+  CopyLibraryPaths(FLibraryLinux64, dlpSearch, FLibraryLinux64, dlpBrowse);
 end;
 
 procedure TDelphiInstallation.CopyToClipBoard(APath: string;
@@ -726,7 +783,7 @@ end;
 
 procedure TDelphiInstallation.ExportLibrary(AFileName: TFileName);
 var
-  LINIfile: TINIFile;
+  LINIfile: TMemIniFile;
   LPathType: TLibraryPathType;
 
   procedure ExportDelphiLibrary(ALibraryPaths: TLibraryPaths;
@@ -740,8 +797,8 @@ var
     for LIdx := 0 to PreD(ALibraryPaths.Count) do
     begin
       LLibraryPath := ALibraryPaths.Path[LIdx];
-      LINIfile.WriteString(LLibraryName, LLibraryPath.Path,
-        TLibraryPath.PathTypeToString(LLibraryPath.PathType));
+      LINIfile.WriteString(LLibraryName, LLibraryPath.Path + ';' +
+        TLibraryPath.PathTypeToString(LLibraryPath.PathType), '');
     end;
 
   end;
@@ -749,7 +806,7 @@ var
 begin
   if FileExists(AFileName) then
     DeleteFile(AFileName);
-  LINIfile := TINIFile.Create(AFileName);
+  LINIfile := TMemIniFile.Create(AFileName);
   try
     for LPathType := dlpSearch to dlpDebugDCU do
     begin
@@ -769,7 +826,7 @@ end;
 
 procedure TDelphiInstallation.ImportLibrary(AFileName: TFileName);
 var
-  LINIfile: TINIFile;
+  LINIfile: TMemIniFile;
 
   procedure ImportDelphiLibrary(ALibrary: TDelphiLibrary);
   var
@@ -777,16 +834,28 @@ var
     LLibraryName: string;
     LPath: string;
     LLibraryPath: TLibraryPathType;
+    LSection: string;
   begin
     LLibrary := TStringList.Create;
     try
       LLibraryName := GetLibraryName(ALibrary);
       LINIfile.ReadSection(LLibraryName, LLibrary);
 
-      for LPath in LLibrary do
+      for LSection in LLibrary do
       begin
-        LLibraryPath := TLibraryPath.PathTypeFromString
-          (LINIfile.ReadString(LLibraryName, LPath, 'None'));
+
+        if Pos(';', LSection) > 0 then
+        begin
+          LPath := Copy(LSection, 1, Pos(';', LSection) - 1);
+          LLibraryPath := TLibraryPath.PathTypeFromString
+            (Copy(LSection, Pos(';', LSection) + 1, Length(LSection)));
+        end
+        else
+        begin
+          LPath := LSection;
+          LLibraryPath := dlpNone;
+        end;
+
         AddPath(LPath, ALibrary, LLibraryPath);
       end;
     finally
@@ -797,7 +866,7 @@ var
 begin
   if FileExists(AFileName) then
   begin
-    LINIfile := TINIFile.Create(AFileName);
+    LINIfile := TMemIniFile.Create(AFileName);
     try
       ImportDelphiLibrary(dlAndroid32);
       ImportDelphiLibrary(dlIOS32);
@@ -1342,6 +1411,18 @@ begin
     FreeAndNil(LExpandedPaths);
   end;
 
+end;
+
+procedure TDelphiInstallation.DeleteAll(APathType: TLibraryPathType);
+begin
+  FLibraryAndroid32.Clear(APathType);
+  FLibraryIOS32.Clear(APathType);
+  FLibraryIOS64.Clear(APathType);
+  FLibraryIOSSimulator.Clear(APathType);
+  FLibraryOSX32.Clear(APathType);
+  FLibraryWin32.Clear(APathType);
+  FLibraryWin64.Clear(APathType);
+  FLibraryLinux64.Clear(APathType);
 end;
 
 function TDelphiInstallation.ExecuteFile(const Operation, FileName, Params,

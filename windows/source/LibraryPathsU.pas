@@ -75,7 +75,8 @@ type
       ALibraryPathType: TLibraryPathType): integer;
     procedure Clear(APathType: TLibraryPathType = dlpAll);
     procedure Copy(ALibraryPaths: TLibraryPaths);
-    function Add(APath: string; ALibraryPathType: TLibraryPathType): integer;
+    function Add(APath: string; ALibraryPathType: TLibraryPathType;
+      AFailOnExists: boolean = false): integer;
     property Path[AIndex: integer]: TLibraryPath read GetLibraryPath;
   end;
 
@@ -210,26 +211,50 @@ end;
 procedure TLibraryPathTemplate.LoadSection(AFileName: TFileName;
   ASectionName: string; ALibraryPathList: TLibraryPaths; AAppend: boolean);
 var
-  LINIFile: TIniFile;
+  LINIFile: TMemIniFile;
   LSectionList: TStringList;
   LSectionIdx: integer;
+  LSection: string;
   LPath: string;
+  LPathTypeString: string;
   LPathType: TLibraryPathType;
 begin
   if not AAppend then
     ALibraryPathList.Clear;
   if FileExists(AFileName) then
   begin
-    LINIFile := TIniFile.Create(AFileName);
+    LINIFile := TMemIniFile.Create(AFileName);
     LSectionList := TStringList.Create;
     try
-      LINIFile.ReadSection(ASectionName, LSectionList);
+      ALibraryPathList.Sort;
+      LINIFile.ReadSectionValues(ASectionName, LSectionList);
       for LSectionIdx := 0 to Pred(LSectionList.Count) do
       begin
-        LPath := LSectionList[LSectionIdx];
-        LPathType := TLibraryPath.PathTypeFromString
-          (LINIFile.ReadString(ASectionName, LSectionList[LSectionIdx],
-          'None'));
+        LSection := LSectionList[LSectionIdx];
+        if Pos(';', LSection) > 0 then
+        begin
+          LPath := Copy(LSection, 1, Pos(';', LSection) - 1);
+          LPathTypeString := (Copy(LSection, Pos(';', LSection) + 1,
+            Length(LSection)));
+          LPathTypeString := StringReplace(LPathTypeString, '=', '',
+            [rfReplaceAll, rfIgnoreCase]);
+          LPathType := TLibraryPath.PathTypeFromString(LPathTypeString);
+
+        end
+        else
+        begin
+          if Pos('=', LSection) > 0 then
+          begin
+            LPath := Copy(LSection, 1, Pos('=', LSection) - 1);
+            LPathType := TLibraryPath.PathTypeFromString
+              (Copy(LSection, Pos('=', LSection) + 1, Length(LSection)));
+          end
+          else
+          begin
+            LPath := LSection;
+            LPathType := dlpNone;
+          end;
+        end;
         ALibraryPathList.Add(LPath, LPathType);
       end;
       ALibraryPathList.Sort;
@@ -260,8 +285,8 @@ end;
 
 { TLibraryPaths }
 
-function TLibraryPaths.Add(APath: string;
-  ALibraryPathType: TLibraryPathType): integer;
+function TLibraryPaths.Add(APath: string; ALibraryPathType: TLibraryPathType;
+  AFailOnExists: boolean): integer;
 var
   LLibraryPath: TLibraryPath;
 begin
@@ -275,6 +300,11 @@ begin
       LLibraryPath.Path := APath;
       LLibraryPath.PathType := ALibraryPathType;
       Result := FLibraryPathList.Add(LLibraryPath);
+    end
+    else
+    begin
+      if AFailOnExists then
+        Result := -1;
     end;
   end;
 end;
@@ -410,8 +440,9 @@ begin
   LIdx := 0;
   while (Result = -1) and (LIdx < Count) do
   begin
-    if SameText(FLibraryPathList[LIdx].Path, IncludeTrailingPathDelimiter(APath)
-      ) and (FLibraryPathList[LIdx].PathType = ALibraryPathType) then
+    if SameText(IncludeTrailingPathDelimiter(FLibraryPathList[LIdx].Path),
+      IncludeTrailingPathDelimiter(APath)) and
+      (FLibraryPathList[LIdx].PathType = ALibraryPathType) then
     begin
       Result := LIdx;
     end;
