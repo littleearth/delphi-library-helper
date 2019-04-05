@@ -793,7 +793,7 @@ var
     LLibraryName: string;
     LIdx: integer;
   begin
-    LLibraryName := GetLibraryName(ADelphiLibrary);
+    LLibraryName := GetLibraryPlatformName(ADelphiLibrary);
     for LIdx := 0 to PreD(ALibraryPaths.Count) do
     begin
       LLibraryPath := ALibraryPaths.Path[LIdx];

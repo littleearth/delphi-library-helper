@@ -1,4 +1,4 @@
-[Android32]
+[android]
 $(BDS)\OCX\Servers\=Browse
 $(BDS)\source\data\=Browse
 $(BDS)\source\data\ado\=Browse
@@ -57,7 +57,7 @@ $(BDS)\SOURCE\VCL\AppAnalytics\=Browse
 $(BDS)\source\Visualizers\=Browse
 $(BDS)\SOURCE\XML\=Browse
 $(BDS)\source\xtab\=Browse
-[iOS32]
+[ios32]
 $(BDS)\OCX\Servers\=Browse
 $(BDS)\source\data\=Browse
 $(BDS)\source\data\ado\=Browse
@@ -181,7 +181,7 @@ $(BDS)\SOURCE\XML\=Browse
 $(BDS)\source\xtab\=Browse
 $(BDSLIB)\$(PLATFORM)\debug\=DebugDCU
 $(BDSLIB)\$(PLATFORM)\Release\=Search
-[iOSSimulator]
+[iosimulator]
 $(BDS)\OCX\Servers\=Browse
 $(BDS)\source\data\=Browse
 $(BDS)\source\data\ado\=Browse
@@ -243,7 +243,7 @@ $(BDS)\SOURCE\XML\=Browse
 $(BDS)\source\xtab\=Browse
 $(BDSLIB)\$(PLATFORM)\debug\=DebugDCU
 $(BDSLIB)\$(PLATFORM)\Release\=Search
-[macOS32]
+[osx32]
 $(BDS)\OCX\Servers\=Browse
 $(BDS)\source\data\=Browse
 $(BDS)\source\data\ado\=Browse
