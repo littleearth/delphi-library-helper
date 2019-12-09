@@ -50,13 +50,13 @@ var
   LAllow: Boolean;
 begin
   LAllow := True;
-  if Trim(editName.Text) <> '' then
+  if Trim(editName.Text) = '' then
   begin
     MessageDlg('Please specify a valid name.', mtError, [mbOK], 0);
     LAllow := False;
   end;
 
-  if Trim(editValue.Text) <> '' then
+  if Trim(editValue.Text) = '' then
   begin
     MessageDlg('Please specify a valid value.', mtError, [mbOK], 0);
     LAllow := False;
