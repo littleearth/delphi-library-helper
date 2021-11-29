@@ -16,12 +16,12 @@
 ; History: 14/02/2011 - First Release.
 ;
 ;-----------------------------------------------------------------------------
-#define ConstAppVersion GetFileVersion("..\windows\bin\win32\release\DelphiLibraryHelper.exe") ; define variable
+#define ConstAppVersion GetFileVersion("..\build\bin\win32\release\DelphiLibraryHelper.exe") ; define variable
 #define ConstAppName "Delphi Library Helper"
 #define ConstAppMutex "Delphi Library Helper"
 #define ConstAppDescription "Delphi Library Helper"
 #define ConstAppPublisher "Little Earth Solutions"
-#define ConstAppCopyright "Copyright (C) 2017 Little Earth Solutions"
+#define ConstAppCopyright "Copyright (C) 2022 Little Earth Solutions"
 #define ConstAppURL "http://www.littleearthsolutions.net/"
 #define ConstAppExeName "DelphiLibraryHelper.exe"
 
@@ -46,9 +46,9 @@ UninstallDisplayName={#ConstAppName}
 DefaultDirName={pf}\{#ConstAppPublisher}\{#ConstAppName}
 DefaultGroupName={#ConstAppPublisher}\{#ConstAppName}
 AllowNoIcons=true
-MinVersion=0,5.0.2195sp3
-InfoBeforeFile=..\docs\{#ConstAppName} - Release Notes.rtf
-LicenseFile=..\docs\{#ConstAppName} - License.rtf
+MinVersion=0,6.1.7600
+InfoBeforeFile=..\resources\common\all\{#ConstAppName} - Release Notes.rtf
+LicenseFile=..\resources\common\all\{#ConstAppName} - License.rtf
 UninstallDisplayIcon={app}\{#ConstAppExeName}
 InternalCompressLevel=ultra
 Compression=lzma/ultra
@@ -66,18 +66,17 @@ Name: program; Description: Program Files; Types: typical custom
 Name: "delphitools"; Description: "Add to delphi tools menu"; Components: program
 
 [Files]
-Source: "..\windows\bin\win32\release\{#ConstAppExeName}"; DestDir: "{app}"; Flags: promptifolder replacesameversion; Components: program
-Source: "..\docs\templates\*.dlht"; DestDir: "{app}\templates";  Components: program
-Source: "..\images\DelphiLibraryHelper.ico"; DestDir: "{app}"; DestName: "DelphiLibraryHelper.ico"
+Source: "..\build\bin\win32\release\{#ConstAppExeName}"; DestDir: "{app}"; Flags: promptifolder replacesameversion; Components: program
+Source: "..\build\bin\win32\release\*"; DestDir: "{app}"; Flags: promptifolder replacesameversion; Components: program
 ; Source Code Components
-Source: "..\docs\*.*"; DestDir: "{app}\source\docs\"; Flags: recursesubdirs; Components: code
-Source: "..\installer\*.*"; DestDir: "{app}\source\installer\"; Components: code
-Source: "..\images\*.*"; DestDir: "{app}\source\images\"; Flags: recursesubdirs; Components: code
-Source: "..\windows\*.pas"; DestDir: "{app}\source\windows\"; Flags: recursesubdirs; Components: code
-Source: "..\windows\*.dfm"; DestDir: "{app}\source\windows\"; Flags: recursesubdirs; Components: code
-Source: "..\windows\*.dpr"; DestDir: "{app}\source\windows\"; Flags: recursesubdirs; Components: code
-Source: "..\windows\*.res"; DestDir: "{app}\source\windows\"; Flags: recursesubdirs; Components: code
-Source: "..\windows\*.dproj"; DestDir: "{app}\source\windows\"; Flags: recursesubdirs; Components: code
+Source: "..\resources\*.*"; DestDir: "{app}\code\resources\"; Components: code
+Source: "..\installer\*.*"; DestDir: "{app}\code\installer\"; Components: code
+Source: "..\images\*.*"; DestDir: "{app}\code\images\"; Flags: recursesubdirs; Components: code
+Source: "..\source\*.pas"; DestDir: "{app}\code\source\"; Flags: recursesubdirs; Components: code
+Source: "..\source\*.dfm"; DestDir: "{app}\code\source\"; Flags: recursesubdirs; Components: code
+Source: "..\source\*.dpr"; DestDir: "{app}\code\source\"; Flags: recursesubdirs; Components: code
+Source: "..\source\*.res"; DestDir: "{app}\code\source\"; Flags: recursesubdirs; Components: code
+Source: "..\source\*.dproj"; DestDir: "{app}\code\source\"; Flags: recursesubdirs; Components: code
 
 [Icons]
 ; Program Components
@@ -90,10 +89,10 @@ Filename: "{app}\{#ConstAppExeName}"; WorkingDir: "{app}"; Flags: nowait postins
 
 [Registry]
 ; Add Delphi Library Helper (Just do most recent version)
-Root: "HKCU"; Subkey: "Software\Embarcadero\BDS\20.0\Transfer\Delphi Library Helper"; ValueType: string; ValueName: "Params"; Tasks: delphitools
-Root: "HKCU"; Subkey: "Software\Embarcadero\BDS\20.0\Transfer\Delphi Library Helper"; ValueType: string; ValueName: "Path"; ValueData: "{app}\DelphiLibraryHelper.exe"; Tasks: delphitools
-Root: "HKCU"; Subkey: "Software\Embarcadero\BDS\20.0\Transfer\Delphi Library Helper"; ValueType: string; ValueName: "Title"; ValueData: "Delphi Library Helper"; Tasks: delphitools
-Root: "HKCU"; Subkey: "Software\Embarcadero\BDS\20.0\Transfer\Delphi Library Helper"; ValueType: string; ValueName: "WorkingDir"; ValueData: "{app}\DelphiLibraryHelper"; Tasks: delphitools
+Root: "HKCU"; Subkey: "Software\Embarcadero\BDS\22.0\Transfer\Delphi Library Helper"; ValueType: string; ValueName: "Params"; Tasks: delphitools
+Root: "HKCU"; Subkey: "Software\Embarcadero\BDS\22.0\Transfer\Delphi Library Helper"; ValueType: string; ValueName: "Path"; ValueData: "{app}\DelphiLibraryHelper.exe"; Tasks: delphitools
+Root: "HKCU"; Subkey: "Software\Embarcadero\BDS\22.0\Transfer\Delphi Library Helper"; ValueType: string; ValueName: "Title"; ValueData: "Delphi Library Helper"; Tasks: delphitools
+Root: "HKCU"; Subkey: "Software\Embarcadero\BDS\22.0\Transfer\Delphi Library Helper"; ValueType: string; ValueName: "WorkingDir"; ValueData: "{app}\DelphiLibraryHelper"; Tasks: delphitools
 ; File association
 Root: HKCR; Subkey: ".dlht"; ValueData: "{#ConstAppName}";Flags: uninsdeletevalue; ValueType: string; ValueName: ""
 Root: HKCR; Subkey: "{#ConstAppName}"; ValueData: "Program {#ConstAppName}";Flags: uninsdeletekey; ValueType: string; ValueName: ""

@@ -4,3 +4,4 @@
 /windows/bin
 /windows/dcu
 /windows/source/*.~dsk
+/build
